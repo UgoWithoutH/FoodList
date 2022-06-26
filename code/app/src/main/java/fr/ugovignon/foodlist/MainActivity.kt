@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanOptions
+import fr.ugovignon.foodlist.data.Product
 import fr.ugovignon.foodlist.ui.theme.FoodListTheme
 
 class MainActivity : ComponentActivity() {
@@ -61,7 +62,7 @@ class MainActivity : ComponentActivity() {
                         fab,
                         fab2
                     ) = createRefs()
-
+                    CardComposable(Product("kinder"))
                     FloatingActionButton(
                         onClick = { barcodeLauncher.launch(ScanOptions()) },
                         modifier = Modifier.constrainAs(fab) {
