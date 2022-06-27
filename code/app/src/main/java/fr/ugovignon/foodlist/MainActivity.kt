@@ -5,7 +5,6 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -18,11 +17,17 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanOptions
 import fr.ugovignon.foodlist.data.Product
+import fr.ugovignon.foodlist.data.parsingData
 import fr.ugovignon.foodlist.data.stubListOfProduct
 import fr.ugovignon.foodlist.ui.theme.FoodListTheme
 import kotlinx.coroutines.launch
+import okhttp3.*
+import org.json.JSONObject
+import java.io.IOException
 
 class MainActivity : ComponentActivity() {
+
+    private val client = OkHttpClient()
 
     private val barcodeLauncher: ActivityResultLauncher<ScanOptions> = registerForActivityResult(
         ScanContract()
@@ -30,10 +35,31 @@ class MainActivity : ComponentActivity() {
         if (result.getContents() == null) {
             Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show()
         } else {
-            Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG)
+            Toast.makeText(this, "Scanned: " + result.contents, Toast.LENGTH_LONG)
                 .show()
+
+            val request = Request.Builder()
+                .url("https://fr.openfoodfacts.org/api/v2/product/${result.contents}")
+                .build()
+
+            client.newCall(request).enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    e.printStackTrace()
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    response.use {
+                        if (!response.isSuccessful) throw IOException("Unexpected code $response")
+
+                        var product = parsingData(response.body!!.string())
+                        productList.add(product)
+                    }
+                }
+            })
         }
     }
+
+    private val productList = stubListOfProduct()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,7 +101,7 @@ class MainActivity : ComponentActivity() {
                         fab,
                         fab2
                     ) = createRefs()
-                    LazyColumnComposable(feedItems = stubListOfProduct().getList())
+                    LazyColumnComposable(feedItems = productList.getList())
                     FloatingActionButton(
                         onClick = { barcodeLauncher.launch(ScanOptions()) },
                         modifier = Modifier.constrainAs(fab) {

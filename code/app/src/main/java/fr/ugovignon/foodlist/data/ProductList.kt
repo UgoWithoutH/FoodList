@@ -1,8 +1,12 @@
 package fr.ugovignon.foodlist.data
 
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
+
 class ProductList{
 
-    private val list: MutableList<Product> = mutableListOf()
+    private val list: SnapshotStateList<Product> = mutableStateListOf()
 
     fun add(product: Product){
         list.add(product)
@@ -12,5 +16,5 @@ class ProductList{
         list.remove(product)
     }
 
-    fun getList() = list.toList()
+    fun getList() = list.toMutableStateList()
 }

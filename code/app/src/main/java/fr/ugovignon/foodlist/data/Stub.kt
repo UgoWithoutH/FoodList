@@ -1,5 +1,8 @@
 package fr.ugovignon.foodlist.data
 
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
+
 fun stubListOfProduct() : ProductList{
     var productList = ProductList()
     productList.add(product1)
