@@ -7,15 +7,15 @@ fun parsingData(data: String) : Product{
     var content = JSONObject(data)
 
     var contentProduct = content.getJSONObject("product")
-    var name = contentProduct.getString("product_name_fr")
+    var name = contentProduct.getString("product_name")
 
-    var ingredients = parsingIngredients(contentProduct.getString("ingredients_text_fr"))
+    var ingredients = parsingIngredients(contentProduct.getString("ingredients_text"))
 
-    var image = contentProduct
+    var image = parsingImage(contentProduct
         .getJSONObject("selected_images")
         .getJSONObject("front")
         .getJSONObject("display")
-        .getString("fr")
+        .toString())
 
     return Product(name, ingredients, image)
 }
@@ -31,4 +31,14 @@ private fun parsingIngredients(data: String) : List<String>{
         ingredientsList.add(replace2)
     }
     return ingredientsList
+}
+
+fun parsingImage(data: String) : String{
+    var dataTmp = data.split("\":\"")
+
+    var replace1 = dataTmp[1].replace("\\","")
+    var replace2 = replace1.replace("}","")
+    var replace3 = replace2.replace("\"","")
+
+    return replace3
 }
