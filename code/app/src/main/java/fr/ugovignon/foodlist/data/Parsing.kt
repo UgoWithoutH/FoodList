@@ -1,8 +1,10 @@
 package fr.ugovignon.foodlist.data
 
+import fr.ugovignon.foodlist.downloadImage
+import okhttp3.OkHttpClient
 import org.json.JSONObject
 
-fun parsingData(data: String) : Product{
+fun parsingData(data: String, httpClient: OkHttpClient) : Product{
 
     var content = JSONObject(data)
 
@@ -11,11 +13,13 @@ fun parsingData(data: String) : Product{
 
     var ingredients = parsingIngredients(contentProduct.getString("ingredients_text"))
 
-    var image = parsingImage(contentProduct
+    var url = parsingImage(contentProduct
         .getJSONObject("selected_images")
         .getJSONObject("front")
         .getJSONObject("display")
         .toString())
+
+    var image = downloadImage(url, httpClient)
 
     return Product(name, ingredients, image)
 }
@@ -27,8 +31,9 @@ private fun parsingIngredients(data: String) : List<String>{
     for(ingredient: String in ingredientsListTmp){
         var replace1 = ingredient.replace("_", " ")
         var replace2 = replace1.replace("  ", " ")
+        var replace3 = replace2.replace("*","")
 
-        ingredientsList.add(replace2)
+        ingredientsList.add(replace3)
     }
     return ingredientsList
 }

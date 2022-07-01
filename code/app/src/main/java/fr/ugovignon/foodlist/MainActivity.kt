@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
     private val barcodeLauncher: ActivityResultLauncher<ScanOptions> = registerForActivityResult(
         ScanContract()
     ) { result ->
-        if (result.getContents() == null) {
+        if (result.contents == null) {
             Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show()
         } else {
             Toast.makeText(this, "Scanned: " + result.contents, Toast.LENGTH_LONG)
@@ -51,7 +51,7 @@ class MainActivity : ComponentActivity() {
                     response.use {
                         if (!response.isSuccessful) throw IOException("Unexpected code $response")
 
-                        var product = parsingData(response.body!!.string())
+                        var product = parsingData(response.body!!.string(), client)
                         productList.add(product)
                     }
                 }

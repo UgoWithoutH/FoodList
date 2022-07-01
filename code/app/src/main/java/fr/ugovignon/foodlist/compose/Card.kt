@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -43,7 +44,7 @@ fun CardComposable(product: Product){
             ) {
                 Spacer(modifier = Modifier.size(16.dp))
                 Image(
-                    painter = painterResource(id = R.drawable.kinder),
+                    bitmap = product.bitmap!!.asImageBitmap(),
                     product.nom,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
