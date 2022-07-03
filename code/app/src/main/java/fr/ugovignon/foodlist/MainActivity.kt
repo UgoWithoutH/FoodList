@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -14,12 +15,18 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.compose.rememberNavController
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanOptions
+import fr.ugovignon.foodlist.compose.ScaffoldComposable
+import fr.ugovignon.foodlist.compose.navigation.SetUpNavGraph
+import fr.ugovignon.foodlist.compose.search.MainViewModel
 import fr.ugovignon.foodlist.data.Product
 import fr.ugovignon.foodlist.data.parsingData
 import fr.ugovignon.foodlist.data.stubListOfProduct
 import fr.ugovignon.foodlist.ui.theme.FoodListTheme
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.*
 import org.json.JSONObject
@@ -61,68 +68,22 @@ class MainActivity : ComponentActivity() {
 
     private val productList = stubListOfProduct()
 
+    private val mainViewModel: MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             FoodListTheme {
-                ScaffoldComposable()
+                var navController = rememberNavController()
+                ScaffoldComposable(
+                    navController = navController,
+                    productList = productList,
+                    barcodeLauncher = barcodeLauncher,
+                    httpClient = client,
+                    mainViewModel = mainViewModel
+                )
             }
         }
-    }
-
-    @Composable
-    fun ScaffoldComposable(){
-        val scaffoldState = rememberScaffoldState()
-        val scope = rememberCoroutineScope()
-        Scaffold(
-            scaffoldState = scaffoldState,
-            drawerContent = { DrawerComposable() },
-            topBar = {
-                TopAppBar(
-                    title = { Text(text = "Food List") },
-                    backgroundColor = MaterialTheme.colors.background,
-                    navigationIcon = {
-                        IconButton(onClick = {
-                            scope.launch { scaffoldState.drawerState.open() }
-                        }) {
-                            Icon(Icons.Filled.Menu,
-                            "menu")
-                        }
-                    }
-                )
-            },
-            content = {
-                ConstraintLayout(
-                    modifier = Modifier.fillMaxSize()
-                ){
-                    val(
-                        topbar,
-                        column,
-                        fab,
-                        fab2
-                    ) = createRefs()
-                    LazyColumnComposable(feedItems = productList.getList())
-                    FloatingActionButton(
-                        onClick = { barcodeLauncher.launch(ScanOptions()) },
-                        modifier = Modifier.constrainAs(fab) {
-                            bottom.linkTo(parent.bottom, margin = 16.dp)
-                            end.linkTo(parent.end, margin = 16.dp)
-                        }
-                    ) {
-                        Icon(Icons.Filled.Add, "ajout produit")
-                    }
-
-                    FloatingActionButton(
-                        onClick = {},
-                        modifier = Modifier.constrainAs(fab2) {
-                            bottom.linkTo(fab.top, margin = 16.dp)
-                            end.linkTo(parent.end, margin = 16.dp)
-                        }
-                    ) {
-                        Icon(Icons.Filled.Create, "scan produit")
-                    }
-                }
-            }
-        )
     }
 }

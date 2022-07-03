@@ -6,13 +6,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import fr.ugovignon.foodlist.data.Product
 
 @Composable
-fun LazyColumnComposable(feedItems : List<Product>){
+fun LazyColumnProduct(navController: NavHostController, feedItems : List<Product>){
     LazyColumn(){
         items(feedItems){
-            item -> CardComposable(product = item)  
+            item -> CardComposable(navController, product = item)
         }
     }
 }

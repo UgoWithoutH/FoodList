@@ -1,8 +1,11 @@
 package fr.ugovignon.foodlist.data
 
 import android.graphics.Bitmap
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
-data class Product(val nom: String, val ingredients: List<String>?, val bitmap: Bitmap?)
+@Parcelize
+data class Product(val name: String, val ingredients: List<String>?, val bitmap: Bitmap?) : Parcelable
 
 /*var product1 = Product("pain", null, )
 var product2 = Product("lait", null, null)

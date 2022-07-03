@@ -16,5 +16,18 @@ class ProductList{
         list.remove(product)
     }
 
-    fun getList() = list.toMutableStateList()
+    fun getList(searchText: String) : SnapshotStateList<Product>{
+        var searchTextLower = searchText.lowercase()
+        var listProduct = list.toMutableStateList()
+        if(searchText != ""){
+            listProduct = mutableStateListOf()
+            for (product: Product in list){
+                if(product.name.lowercase().contains(searchTextLower)){
+                    listProduct.add(product)
+                }
+            }
+        }
+
+        return listProduct
+    }
 }
