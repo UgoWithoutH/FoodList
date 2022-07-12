@@ -2,10 +2,11 @@ package fr.ugovignon.foodlist.compose
 
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -14,29 +15,43 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.journeyapps.barcodescanner.ScanOptions
 import fr.ugovignon.foodlist.DrawerComposable
+import fr.ugovignon.foodlist.R
 import fr.ugovignon.foodlist.compose.navigation.SetUpNavGraph
-import fr.ugovignon.foodlist.compose.search.MainViewModel
+import fr.ugovignon.foodlist.compose.view_models.MainViewModel
 import fr.ugovignon.foodlist.compose.search.SearchWidgetState
+import fr.ugovignon.foodlist.compose.view_models.AddViewModel
+import fr.ugovignon.foodlist.compose.view_models.ModifyViewModel
 import fr.ugovignon.foodlist.data.ProductList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 
 @Composable
-fun ScaffoldComposable(navController: NavHostController, productList: ProductList, barcodeLauncher: ActivityResultLauncher<ScanOptions>, httpClient: OkHttpClient, mainViewModel: MainViewModel){
+fun ScaffoldComposable(
+    navController: NavHostController,
+    productList: ProductList,
+    barcodeLauncher: ActivityResultLauncher<ScanOptions>,
+    httpClient: OkHttpClient,
+    mainViewModel: MainViewModel,
+    modifyViewModel: ModifyViewModel,
+    addViewModel: AddViewModel
+) {
+
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
-    val searchWidgetState by mainViewModel.searchWidgetState
-    val searchTextState by mainViewModel.searchTextState
+    val searchWidgetState = mainViewModel.searchWidgetState
+    val searchTextState = mainViewModel.searchTextState
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -67,7 +82,10 @@ fun ScaffoldComposable(navController: NavHostController, productList: ProductLis
                 httpClient = httpClient,
                 barcodeLauncher = barcodeLauncher,
                 productList = productList,
-                searchTextState = searchTextState
+                searchTextState = searchTextState,
+                mainViewModel = mainViewModel,
+                modifyViewModel = modifyViewModel,
+                addViewModel = addViewModel
             )
         }
     )
@@ -104,17 +122,42 @@ fun MainAppBar(
 }
 
 @Composable
-fun DefaultAppBar(onSearchClicked: () -> Unit, scope: CoroutineScope, scaffoldState: ScaffoldState) {
+fun DefaultAppBar(
+    onSearchClicked: () -> Unit,
+    scope: CoroutineScope,
+    scaffoldState: ScaffoldState
+) {
     TopAppBar(
-        title = { Text(text = "Food List") },
-        backgroundColor = MaterialTheme.colors.background,
+        title = {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Food List",
+                    color = Color.White
+                )
+                Spacer(modifier = Modifier.width(20.dp))
+                Image(
+                    painter = painterResource(id = R.drawable.logo_licorne),
+                    contentDescription = "logo-licorne",
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .size(45.dp)
+                        .background(Color.White)
+                )
+            }
+        },
+        backgroundColor = Color(0xFF824083),
         navigationIcon = {
             IconButton(onClick = {
                 scope.launch { scaffoldState.drawerState.open() }
             }) {
                 Icon(
-                    Icons.Filled.Menu,
-                    "menu")
+                    imageVector = Icons.Filled.Menu,
+                    contentDescription = "menu",
+                    tint = Color.White
+                )
             }
         },
         actions = {
@@ -141,10 +184,11 @@ fun SearchAppBar(
             .fillMaxWidth()
             .height(56.dp),
         elevation = AppBarDefaults.TopAppBarElevation,
-        color = MaterialTheme.colors.primary
+        color = Color(0xFF824083)
     ) {
-        TextField(modifier = Modifier
-            .fillMaxWidth(),
+        TextField(
+            modifier = Modifier
+                .fillMaxWidth(),
             value = text,
             onValueChange = {
                 onTextChange(it)
@@ -190,18 +234,11 @@ fun SearchAppBar(
                         tint = Color.White
                     )
                 }
-            },/*
-            keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Search
-            ),
-            keyboardActions = KeyboardActions(
-                onSearch = {
-                    onSearchClicked(text)
-                }
-            ),*/
+            },
             colors = TextFieldDefaults.textFieldColors(
                 backgroundColor = Color.Transparent,
                 cursorColor = Color.White.copy(alpha = ContentAlpha.medium)
-            ))
+            )
+        )
     }
 }

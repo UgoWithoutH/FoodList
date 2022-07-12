@@ -2,10 +2,35 @@ package fr.ugovignon.foodlist.data
 
 import android.graphics.Bitmap
 import android.os.Parcelable
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class Product(val name: String, val ingredients: List<String>?, val bitmap: Bitmap?) : Parcelable
+data class Product(var name: String, private val ingredients: MutableList<Ingredient>?, val bitmap: Bitmap?) : Parcelable{
+
+    fun getIngredient() : List<Ingredient>{
+        return ingredients!!.toList()
+    }
+
+    fun removeIngredient(ingredient: Ingredient){
+        ingredients!!.remove(ingredient)
+    }
+
+    fun addIngredient(ingredient: Ingredient): Boolean{
+        if(!ingredients!!.contains(ingredient)){
+            ingredients.add(ingredient)
+            return true
+        }
+        return false
+    }
+
+    fun isIngredientsNotEmpty() : Boolean{
+        return ingredients!!.isNotEmpty()
+    }
+}
+
+
 
 /*var product1 = Product("pain", null, )
 var product2 = Product("lait", null, null)

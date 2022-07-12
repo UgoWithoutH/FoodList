@@ -1,10 +1,13 @@
 package fr.ugovignon.foodlist.data
 
+import android.os.Parcelable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
+import kotlinx.parcelize.Parcelize
 
-class ProductList{
+@Parcelize
+class ProductList : Parcelable{
 
     private val list: SnapshotStateList<Product> = mutableStateListOf()
 
@@ -17,7 +20,7 @@ class ProductList{
     }
 
     fun getList(searchText: String) : SnapshotStateList<Product>{
-        var searchTextLower = searchText.lowercase()
+        val searchTextLower = searchText.lowercase()
         var listProduct = list.toMutableStateList()
         if(searchText != ""){
             listProduct = mutableStateListOf()

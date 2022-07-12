@@ -10,26 +10,29 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import fr.ugovignon.foodlist.compose.screen.Screen
+import fr.ugovignon.foodlist.data.Ingredient
 
 @Composable
-fun LazyColumnIngredients(feedItems : List<String>, size: Int){
+fun LazyColumnIngredients(feedItems : List<Ingredient>){
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        itemsIndexed(feedItems){
-            index, item ->
+        items(feedItems){
+            item ->
             Card(
                 shape = RoundedCornerShape(20.dp),
                 elevation = 4.dp
             ) {
                 Text(
                     modifier = Modifier.padding(10.dp),
-                    text = item
+                    text = item.name
                 )
             }
             Spacer(modifier = Modifier.height(10.dp))
