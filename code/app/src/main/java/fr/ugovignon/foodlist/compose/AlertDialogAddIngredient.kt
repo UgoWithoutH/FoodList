@@ -1,23 +1,14 @@
 package fr.ugovignon.foodlist.compose
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.core.graphics.component1
-import androidx.core.graphics.component2
-import androidx.core.graphics.component3
 import fr.ugovignon.foodlist.compose.view_models.ModifyViewModel
 import fr.ugovignon.foodlist.data.Ingredient
 import fr.ugovignon.foodlist.data.Product
@@ -86,7 +77,7 @@ fun AlertAddDialogIngredientComposable(
                             if (modifyViewModel.addIngredientName.isNotBlank()) {
                                 product.addIngredient(Ingredient(modifyViewModel.addIngredientName))
                                 snapshotStateList.clear()
-                                snapshotStateList.addAll(product.getIngredient())
+                                snapshotStateList.addAll(product.getIngredients())
                             }
                             openDialog.value = false
                         }) {

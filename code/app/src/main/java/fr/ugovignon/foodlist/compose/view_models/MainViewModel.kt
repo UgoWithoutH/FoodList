@@ -2,18 +2,19 @@ package fr.ugovignon.foodlist.compose.view_models
 
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
+import fr.ugovignon.foodlist.Constants
+import fr.ugovignon.foodlist.classify.AlphabeticalClassifier
+import fr.ugovignon.foodlist.classify.Classifier
+import fr.ugovignon.foodlist.classify.NoneClassifier
 import fr.ugovignon.foodlist.compose.search.SearchWidgetState
+import fr.ugovignon.foodlist.data.Ingredient
 import fr.ugovignon.foodlist.data.ProductList
 
 class MainViewModel : ViewModel() {
 
     //Search
-
     var searchWidgetState by mutableStateOf(SearchWidgetState.CLOSED)
-
     var searchTextState by mutableStateOf("")
-
-    val productList = ProductList()
 
     fun updateSearchWidgetState(newValue: SearchWidgetState) {
         searchWidgetState = newValue
@@ -24,20 +25,35 @@ class MainViewModel : ViewModel() {
     }
 
     //Select box
-    private val listSort = listOf("one", "two", "three", "four", "five")
+    private val listClassify = listOf(NoneClassifier("Rien"), AlphabeticalClassifier("Alphabétique"))
     var expandedSort by mutableStateOf(false)
-    var currentValueSort by mutableStateOf(listSort[0])
+    var currentValueClassifier by mutableStateOf(listClassify[0])
 
-    private val listFilter = listOf("one", "two", "three", "four", "five")
+    private val listFilter = mutableListOf(Ingredient(Constants.NONE_FILTER))
     var expandedFilter by mutableStateOf(false)
     var currentValueFilter by mutableStateOf(listFilter[0])
 
-    fun getListFilter(): List<String>{
+    fun getListClassify(): List<Classifier>{
+        return listClassify.toList()
+    }
+
+    fun getListFilter(): List<Ingredient>{
         return listFilter.toList()
     }
 
-    fun getListSort(): List<String>{
-        return listSort.toList()
+    fun addFilter(filter: Ingredient){
+        if(!listFilter.contains(filter)){
+            listFilter.add(filter)
+        }
     }
 
+    fun addFilters(ingredients: List<Ingredient>){
+        ingredients.forEach {
+            addFilter(it)
+        }
+    }
+
+
+    //Product list
+    val productList = ProductList()
 }

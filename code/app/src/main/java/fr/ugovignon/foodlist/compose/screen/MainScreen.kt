@@ -72,12 +72,19 @@ fun MainScreen(
                             mainViewModel.expandedSort = !mainViewModel.expandedSort
                         }
                         .fillMaxWidth(0.45f)
-                        .height(30.dp),
+                        .height(50.dp),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "classer par : ${mainViewModel.currentValueSort}")
-                    Icon(imageVector = Icons.Filled.ArrowDropDown, contentDescription = null)
+                    Column(
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Row() {
+                            Text(text = "classer par ")
+                            Icon(imageVector = Icons.Filled.ArrowDropDown, contentDescription = null)
+                        }
+                        Text(text = mainViewModel.currentValueClassifier.name)
+                    }
 
 
                     DropdownMenu(
@@ -86,18 +93,18 @@ fun MainScreen(
                             mainViewModel.expandedSort = false
                         }) {
 
-                        mainViewModel.getListSort().forEach {
+                        mainViewModel.getListClassify().forEach {
 
                             DropdownMenuItem(
                                 onClick = {
-                                    mainViewModel.currentValueSort = it
+                                    mainViewModel.currentValueClassifier = it
                                     mainViewModel.expandedSort = false
                                 }) {
                                 Box(
                                     contentAlignment = Alignment.Center,
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
-                                    Text(text = it)
+                                    Text(text = it.name)
                                 }
                             }
                         }
@@ -116,14 +123,20 @@ fun MainScreen(
                             mainViewModel.expandedFilter = !mainViewModel.expandedFilter
                         }
                         .fillMaxWidth(0.85f)
-                        .height(30.dp)
+                        .height(50.dp)
                         .background(Color(0xFF824083)),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "filtrer par : ${mainViewModel.currentValueFilter}")
-                    Icon(imageVector = Icons.Filled.ArrowDropDown, contentDescription = null)
-
+                    Column(
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Row() {
+                            Text(text = "filtrer par ")
+                            Icon(imageVector = Icons.Filled.ArrowDropDown, contentDescription = null)
+                        }
+                        Text(text = mainViewModel.currentValueFilter.name)
+                    }
                     DropdownMenu(
                         expanded = mainViewModel.expandedFilter,
                         onDismissRequest = {
@@ -141,7 +154,7 @@ fun MainScreen(
                                     contentAlignment = Alignment.Center,
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
-                                    Text(text = it)
+                                    Text(text = it.name)
                                 }
                             }
                         }
@@ -157,7 +170,7 @@ fun MainScreen(
                     top.linkTo(select.bottom)
                 }
         ) {
-            items(productList.getList(mainViewModel.searchTextState)) { item ->
+            items(productList.getList(mainViewModel.searchTextState, mainViewModel.currentValueClassifier, mainViewModel.currentValueFilter)) { item ->
                 CardComposable(navController, item, productList)
             }
         }
@@ -183,10 +196,6 @@ fun MainScreen(
 
         FloatingActionButton(
             onClick = {
-                navController.currentBackStackEntry?.savedStateHandle?.set(
-                    key = "productList",
-                    value = productList
-                )
                 navController.navigate(Screen.AddScreen.route)
             },
             backgroundColor = Color(0xFF824083),

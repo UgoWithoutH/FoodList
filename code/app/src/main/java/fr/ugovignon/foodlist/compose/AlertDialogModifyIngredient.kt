@@ -37,7 +37,7 @@ fun AlertModifyDialogIngredientComposable(
                         onClick = {
                             product.removeIngredient(modifyViewModel.ingredient!!)
                             snapshotStateList.clear()
-                            snapshotStateList.addAll(product.getIngredient())
+                            snapshotStateList.addAll(product.getIngredients())
                             openDialog.value = false
                         }) {
                         Text(
@@ -98,7 +98,7 @@ fun AlertModifyDialogIngredientComposable(
                                 modifyViewModel.ingredient!!.name =
                                     modifyViewModel.modifyIngredientName
                                 snapshotStateList.clear()
-                                snapshotStateList.addAll(product.getIngredient())
+                                snapshotStateList.addAll(product.getIngredients())
                             }
                             openDialog.value = false
                         }) {

@@ -6,7 +6,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.viewModels
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanOptions
@@ -47,6 +46,7 @@ class MainActivity : ComponentActivity() {
 
                         var product = parsingData(response.body!!.string(), client)
                         mainViewModel.productList.add(product)
+                        mainViewModel.addFilters(product.getIngredients())
                     }
                 }
             })

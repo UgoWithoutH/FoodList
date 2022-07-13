@@ -23,44 +23,44 @@ import fr.ugovignon.foodlist.compose.view_models.ModifyViewModel
 import okhttp3.OkHttpClient
 
 @Composable
-fun SetUpNavGraph(navController: NavHostController,
-                  httpClient: OkHttpClient,
-                  barcodeLauncher: ActivityResultLauncher<ScanOptions>,
-                  productList: ProductList,
-                  searchTextState: String,
-                  mainViewModel: MainViewModel,
-                  modifyViewModel: ModifyViewModel,
-                  addViewModel: AddViewModel
-){
+fun SetUpNavGraph(
+    navController: NavHostController,
+    httpClient: OkHttpClient,
+    barcodeLauncher: ActivityResultLauncher<ScanOptions>,
+    productList: ProductList,
+    searchTextState: String,
+    mainViewModel: MainViewModel,
+    modifyViewModel: ModifyViewModel,
+    addViewModel: AddViewModel
+) {
 
     NavHost(
         navController = navController,
         startDestination = Screen.MainScreen.route
     )
     {
-        composable(route = Screen.MainScreen.route){
+        composable(route = Screen.MainScreen.route) {
             MainScreen(navController, productList, barcodeLauncher, mainViewModel)
         }
 
         composable(route = Screen.DetailScreen.route) {
-            val result = navController.previousBackStackEntry?.savedStateHandle?.get<Product>("product")
-            if(result != null) {
+            val result =
+                navController.previousBackStackEntry?.savedStateHandle?.get<Product>("product")
+            if (result != null) {
                 DetailScreen(navController, result, modifyViewModel)
             }
         }
 
         composable(route = Screen.ModifyScreen.route) {
-            val result = navController.previousBackStackEntry?.savedStateHandle?.get<Product>("product")
-            if(result != null) {
+            val result =
+                navController.previousBackStackEntry?.savedStateHandle?.get<Product>("product")
+            if (result != null) {
                 ModifyScreen(navController, result, modifyViewModel)
             }
         }
 
         composable(route = Screen.AddScreen.route) {
-            val result = navController.previousBackStackEntry?.savedStateHandle?.get<ProductList>("productList")
-            if(result != null) {
-                AddScreen(navController, result, addViewModel)
-            }
+            AddScreen(navController, mainViewModel, addViewModel)
         }
     }
 }

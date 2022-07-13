@@ -23,7 +23,7 @@ fun LazyColumnModifyIngredients(product: Product,
                                 openDialogAdd: MutableState<Boolean>){
 
     val openDialogModify = remember { mutableStateOf(false) }
-    val feeditems = product.getIngredient().toMutableStateList()
+    val feeditems = product.getIngredients().toMutableStateList()
 
     AlertAddDialogIngredientComposable(openDialogAdd, product, feeditems, modifyViewModel)
     AlertModifyDialogIngredientComposable(openDialogModify, product, feeditems, modifyViewModel)

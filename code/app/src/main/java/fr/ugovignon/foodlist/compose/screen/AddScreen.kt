@@ -22,12 +22,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import fr.ugovignon.foodlist.compose.view_models.AddViewModel
+import fr.ugovignon.foodlist.compose.view_models.MainViewModel
 import fr.ugovignon.foodlist.data.ProductList
 
 @Composable
 fun AddScreen(
     navController: NavHostController,
-    productList: ProductList,
+    mainViewModel: MainViewModel,
     addViewModel: AddViewModel
 ) {
     val context = LocalContext.current

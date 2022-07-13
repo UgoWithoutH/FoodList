@@ -7,18 +7,18 @@ import androidx.compose.runtime.toMutableStateList
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class Product(var name: String, private val ingredients: MutableList<Ingredient>?, val bitmap: Bitmap?) : Parcelable{
+data class Product(var name: String, private val ingredients: MutableList<Ingredient>, val bitmap: Bitmap?) : Parcelable{
 
-    fun getIngredient() : List<Ingredient>{
-        return ingredients!!.toList()
+    fun getIngredients() : List<Ingredient>{
+        return ingredients.toList()
     }
 
     fun removeIngredient(ingredient: Ingredient){
-        ingredients!!.remove(ingredient)
+        ingredients.remove(ingredient)
     }
 
     fun addIngredient(ingredient: Ingredient): Boolean{
-        if(!ingredients!!.contains(ingredient)){
+        if(!ingredients.contains(ingredient)){
             ingredients.add(ingredient)
             return true
         }

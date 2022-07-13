@@ -1,13 +1,12 @@
 package fr.ugovignon.foodlist.data
 
-import android.os.Parcelable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
-import kotlinx.parcelize.Parcelize
+import fr.ugovignon.foodlist.Constants
+import fr.ugovignon.foodlist.classify.Classifier
 
-@Parcelize
-class ProductList : Parcelable{
+class ProductList(){
 
     private val list: SnapshotStateList<Product> = mutableStateListOf()
 
@@ -19,9 +18,13 @@ class ProductList : Parcelable{
         list.remove(product)
     }
 
-    fun getList(searchText: String) : SnapshotStateList<Product>{
+    fun getList(searchText: String, classifierSelected: Classifier, filterSelected: Ingredient) : SnapshotStateList<Product>{
         val searchTextLower = searchText.lowercase()
         var listProduct = list.toMutableStateList()
+
+        listProduct = listFiltered(listProduct, filterSelected)
+        listClassified(listProduct, classifierSelected)
+
         if(searchText != ""){
             listProduct = mutableStateListOf()
             for (product: Product in list){
@@ -32,5 +35,19 @@ class ProductList : Parcelable{
         }
 
         return listProduct
+    }
+
+    private fun listClassified(list: SnapshotStateList<Product>,
+                               classifierSelected: Classifier){
+        classifierSelected.classify(list)
+    }
+
+    private fun listFiltered(list: SnapshotStateList<Product>,
+                             filterSelected: Ingredient) : SnapshotStateList<Product>{
+        if(filterSelected.name == Constants.NONE_FILTER) return list
+
+        return list.filter {
+            it.getIngredients().contains(filterSelected)
+        }.toMutableStateList()
     }
 }
