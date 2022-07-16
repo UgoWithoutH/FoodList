@@ -1,10 +1,5 @@
 package fr.ugovignon.foodlist.compose.screen
 
-import android.content.Intent
-import android.content.res.Configuration
-import android.provider.MediaStore
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -23,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import fr.ugovignon.foodlist.compose.view_models.AddViewModel
 import fr.ugovignon.foodlist.compose.view_models.MainViewModel
-import fr.ugovignon.foodlist.data.ProductList
 
 @Composable
 fun AddScreen(

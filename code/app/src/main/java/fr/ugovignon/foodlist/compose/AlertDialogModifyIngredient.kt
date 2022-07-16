@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import fr.ugovignon.foodlist.compose.view_models.MainViewModel
 import fr.ugovignon.foodlist.compose.view_models.ModifyViewModel
 import fr.ugovignon.foodlist.data.Ingredient
 import fr.ugovignon.foodlist.data.Product
@@ -19,7 +20,8 @@ fun AlertModifyDialogIngredientComposable(
     openDialog: MutableState<Boolean>,
     product: Product,
     snapshotStateList: SnapshotStateList<Ingredient>,
-    modifyViewModel: ModifyViewModel
+    modifyViewModel: ModifyViewModel,
+    mainViewModel: MainViewModel
 ) {
     if (openDialog.value) {
         AlertDialog(
@@ -36,6 +38,7 @@ fun AlertModifyDialogIngredientComposable(
                         colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF824083)),
                         onClick = {
                             product.removeIngredient(modifyViewModel.ingredient!!)
+                            mainViewModel.checkIngredientFilter(modifyViewModel.ingredient!!)
                             snapshotStateList.clear()
                             snapshotStateList.addAll(product.getIngredients())
                             openDialog.value = false

@@ -1,6 +1,6 @@
 package fr.ugovignon.foodlist
 
-import android.graphics.drawable.Icon
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,8 +10,8 @@ import androidx.compose.material.Card
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,10 +23,19 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavHostController
 import fr.ugovignon.foodlist.data.Product
 import fr.ugovignon.foodlist.compose.screen.Screen
-import fr.ugovignon.foodlist.data.ProductList
+import fr.ugovignon.foodlist.compose.view_models.MainViewModel
+import fr.ugovignon.foodlist.managers.ProductManager
+import kotlinx.coroutines.launch
 
 @Composable
-fun CardComposable(navController: NavHostController, product: Product, productList: ProductList) {
+fun CardComposable(
+    navController: NavHostController,
+    product: Product,
+    productManager: ProductManager,
+    mainViewModel: MainViewModel,
+    context: Context
+) {
+    val coroutineScope = rememberCoroutineScope()
     val paddingDeHors = 16.dp
     val paddingDeDans = 8.dp
     Card(
@@ -78,7 +87,15 @@ fun CardComposable(navController: NavHostController, product: Product, productLi
                         top.linkTo(parent.top)
                         end.linkTo(parent.end)
                     },
-                    onClick = { productList.remove(product) },
+                    onClick = {
+                        productManager.remove(product)
+                        product.getIngredients().forEach {
+                            mainViewModel.checkIngredientFilter(it)
+                        }
+                        coroutineScope.launch {
+                            mainViewModel.dataStoreProductManager.deleteProduct(context, product)
+                        }
+                    },
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.ic_baseline_restore_from_trash_24),

@@ -29,6 +29,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavHostController
 import fr.ugovignon.foodlist.compose.LazyColumnIngredients
 import fr.ugovignon.foodlist.compose.LazyColumnModifyIngredients
+import fr.ugovignon.foodlist.compose.view_models.MainViewModel
 import fr.ugovignon.foodlist.compose.view_models.ModifyViewModel
 import fr.ugovignon.foodlist.data.Product
 import okhttp3.internal.wait
@@ -37,7 +38,8 @@ import okhttp3.internal.wait
 fun ModifyScreen(
     navController: NavHostController,
     product: Product,
-    modifyViewModel: ModifyViewModel
+    modifyViewModel: ModifyViewModel,
+    mainViewModel: MainViewModel
 ) {
 
     val openDialogAdd = remember { mutableStateOf(false) }
@@ -127,7 +129,7 @@ fun ModifyScreen(
             }
             Spacer(modifier = Modifier.height(25.dp))
             if (product.isIngredientsNotEmpty()) {
-                LazyColumnModifyIngredients(product, modifyViewModel, openDialogAdd)
+                LazyColumnModifyIngredients(product, modifyViewModel, mainViewModel, openDialogAdd)
             }
         }
     }

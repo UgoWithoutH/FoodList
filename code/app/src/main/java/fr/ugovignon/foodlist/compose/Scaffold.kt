@@ -1,10 +1,10 @@
 package fr.ugovignon.foodlist.compose
 
+import android.content.Context
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
@@ -13,7 +13,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,7 +31,7 @@ import fr.ugovignon.foodlist.compose.view_models.MainViewModel
 import fr.ugovignon.foodlist.compose.search.SearchWidgetState
 import fr.ugovignon.foodlist.compose.view_models.AddViewModel
 import fr.ugovignon.foodlist.compose.view_models.ModifyViewModel
-import fr.ugovignon.foodlist.data.ProductList
+import fr.ugovignon.foodlist.managers.ProductManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
@@ -40,12 +39,13 @@ import okhttp3.OkHttpClient
 @Composable
 fun ScaffoldComposable(
     navController: NavHostController,
-    productList: ProductList,
+    productManager: ProductManager,
     barcodeLauncher: ActivityResultLauncher<ScanOptions>,
     httpClient: OkHttpClient,
     mainViewModel: MainViewModel,
     modifyViewModel: ModifyViewModel,
-    addViewModel: AddViewModel
+    addViewModel: AddViewModel,
+    context: Context
 ) {
 
     val scaffoldState = rememberScaffoldState()
@@ -81,11 +81,12 @@ fun ScaffoldComposable(
                 navController = navController,
                 httpClient = httpClient,
                 barcodeLauncher = barcodeLauncher,
-                productList = productList,
+                productManager = productManager,
                 searchTextState = searchTextState,
                 mainViewModel = mainViewModel,
                 modifyViewModel = modifyViewModel,
-                addViewModel = addViewModel
+                addViewModel = addViewModel,
+                context = context
             )
         }
     )

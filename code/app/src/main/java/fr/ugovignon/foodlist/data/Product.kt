@@ -28,6 +28,10 @@ data class Product(var name: String, private val ingredients: MutableList<Ingred
     fun isIngredientsNotEmpty() : Boolean{
         return ingredients!!.isNotEmpty()
     }
+
+    override fun equals(other: Any?): Boolean {
+        return (other is Product) && other.name == this.name
+    }
 }
 
 

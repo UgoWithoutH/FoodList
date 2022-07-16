@@ -1,33 +1,43 @@
-package fr.ugovignon.foodlist.data
+package fr.ugovignon.foodlist.managers
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import fr.ugovignon.foodlist.Constants
 import fr.ugovignon.foodlist.classify.Classifier
+import fr.ugovignon.foodlist.data.Ingredient
+import fr.ugovignon.foodlist.data.Product
 
-class ProductList(){
+class ProductManager(){
 
-    private val list: SnapshotStateList<Product> = mutableStateListOf()
+    private val productList: SnapshotStateList<Product> = mutableStateListOf()
 
     fun add(product: Product){
-        list.add(product)
+        productList.add(product)
+    }
+
+    fun addAll(list: List<Product>){
+        productList.addAll(list)
     }
 
     fun remove(product: Product){
-        list.remove(product)
+        productList.remove(product)
+    }
+
+    fun getList() : SnapshotStateList<Product>{
+        return productList.toMutableStateList()
     }
 
     fun getList(searchText: String, classifierSelected: Classifier, filterSelected: Ingredient) : SnapshotStateList<Product>{
         val searchTextLower = searchText.lowercase()
-        var listProduct = list.toMutableStateList()
+        var listProduct = productList.toMutableStateList()
 
         listProduct = listFiltered(listProduct, filterSelected)
         listClassified(listProduct, classifierSelected)
 
         if(searchText != ""){
             listProduct = mutableStateListOf()
-            for (product: Product in list){
+            for (product: Product in productList){
                 if(product.name.lowercase().contains(searchTextLower)){
                     listProduct.add(product)
                 }
@@ -43,7 +53,8 @@ class ProductList(){
     }
 
     private fun listFiltered(list: SnapshotStateList<Product>,
-                             filterSelected: Ingredient) : SnapshotStateList<Product>{
+                             filterSelected: Ingredient
+    ) : SnapshotStateList<Product>{
         if(filterSelected.name == Constants.NONE_FILTER) return list
 
         return list.filter {

@@ -1,15 +1,8 @@
 package fr.ugovignon.foodlist.compose.navigation
 
+import android.content.Context
 import androidx.activity.result.ActivityResultLauncher
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -18,7 +11,7 @@ import fr.ugovignon.foodlist.compose.screen.*
 import fr.ugovignon.foodlist.compose.view_models.AddViewModel
 import fr.ugovignon.foodlist.compose.view_models.MainViewModel
 import fr.ugovignon.foodlist.data.Product
-import fr.ugovignon.foodlist.data.ProductList
+import fr.ugovignon.foodlist.managers.ProductManager
 import fr.ugovignon.foodlist.compose.view_models.ModifyViewModel
 import okhttp3.OkHttpClient
 
@@ -27,11 +20,12 @@ fun SetUpNavGraph(
     navController: NavHostController,
     httpClient: OkHttpClient,
     barcodeLauncher: ActivityResultLauncher<ScanOptions>,
-    productList: ProductList,
+    productManager: ProductManager,
     searchTextState: String,
     mainViewModel: MainViewModel,
     modifyViewModel: ModifyViewModel,
-    addViewModel: AddViewModel
+    addViewModel: AddViewModel,
+    context: Context
 ) {
 
     NavHost(
@@ -40,7 +34,7 @@ fun SetUpNavGraph(
     )
     {
         composable(route = Screen.MainScreen.route) {
-            MainScreen(navController, productList, barcodeLauncher, mainViewModel)
+            MainScreen(navController, productManager, barcodeLauncher, mainViewModel, context)
         }
 
         composable(route = Screen.DetailScreen.route) {
@@ -55,7 +49,7 @@ fun SetUpNavGraph(
             val result =
                 navController.previousBackStackEntry?.savedStateHandle?.get<Product>("product")
             if (result != null) {
-                ModifyScreen(navController, result, modifyViewModel)
+                ModifyScreen(navController, result, modifyViewModel, mainViewModel)
             }
         }
 

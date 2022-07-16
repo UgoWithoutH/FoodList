@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import fr.ugovignon.foodlist.compose.view_models.MainViewModel
 import fr.ugovignon.foodlist.compose.view_models.ModifyViewModel
 import fr.ugovignon.foodlist.data.Ingredient
 import fr.ugovignon.foodlist.data.Product
@@ -18,7 +19,8 @@ fun AlertAddDialogIngredientComposable(
     openDialog: MutableState<Boolean>,
     product: Product,
     snapshotStateList: SnapshotStateList<Ingredient>,
-    modifyViewModel: ModifyViewModel
+    modifyViewModel: ModifyViewModel,
+    mainViewModel: MainViewModel
 ) {
     if (openDialog.value) {
         AlertDialog(
@@ -75,7 +77,9 @@ fun AlertAddDialogIngredientComposable(
                         },
                         onClick = {
                             if (modifyViewModel.addIngredientName.isNotBlank()) {
-                                product.addIngredient(Ingredient(modifyViewModel.addIngredientName))
+                                var ingredient = Ingredient(modifyViewModel.addIngredientName)
+                                product.addIngredient(ingredient)
+                                mainViewModel.addFilter(ingredient)
                                 snapshotStateList.clear()
                                 snapshotStateList.addAll(product.getIngredients())
                             }
@@ -92,87 +96,3 @@ fun AlertAddDialogIngredientComposable(
         )
     }
 }
-
-
-/*
-(
-    openDialog: MutableState<Boolean>,
-    product: Product,
-    snapshotStateList: SnapshotStateList<Ingredient>,
-    modifyViewModel: ModifyViewModel
-) {
-    if (openDialog.value) {
-        val (innerPaddingStart, innerPaddingEnd, innerPaddingBottom) = 30
-
-        Dialog(
-            onDismissRequest = { openDialog.value = false },
-            content = {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(500.dp)
-                        .padding(
-                            start = innerPaddingStart.dp,
-                            end = innerPaddingEnd.dp,
-                            bottom = innerPaddingBottom.dp
-                        )
-                        .background(Color.White),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    ConstraintLayout(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        val cancel = createRef()
-
-                        IconButton(
-                            modifier = Modifier
-                                .constrainAs(cancel) {
-                                    end.linkTo(parent.end)
-                                    top.linkTo(parent.top)
-                                },
-                            onClick = {
-                                openDialog.value = !openDialog.value
-                            }) {
-                            Icon(
-                                modifier = Modifier
-                                    .size(30.dp),
-                                imageVector = Icons.Default.Close,
-                                contentDescription = "Annuler",
-                                tint = Color.Red
-                            )
-                        }
-                    }
-
-                    OutlinedTextField(
-                        value = modifyViewModel.addIngredientName,
-                        onValueChange = {
-                            modifyViewModel.addIngredientName = it
-                        },
-                        label = { Text(text = "nom ingrédient") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = innerPaddingStart.dp, end = innerPaddingEnd.dp)
-                    )
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        Button(
-                            onClick = {
-                                if (modifyViewModel.addIngredientName.isNotBlank()) {
-                                    product.addIngredient(Ingredient(modifyViewModel.addIngredientName))
-                                    snapshotStateList.clear()
-                                    snapshotStateList.addAll(product.getIngredient())
-                                }
-                                openDialog.value = false
-                            }) {
-                            Text(text = "Valider")
-                        }
-                    }
-                }
-            }
-        )
-    }
-}
- */

@@ -14,19 +14,21 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import fr.ugovignon.foodlist.compose.view_models.MainViewModel
 import fr.ugovignon.foodlist.compose.view_models.ModifyViewModel
 import fr.ugovignon.foodlist.data.Product
 
 @Composable
 fun LazyColumnModifyIngredients(product: Product,
                                 modifyViewModel: ModifyViewModel,
+                                mainViewModel: MainViewModel,
                                 openDialogAdd: MutableState<Boolean>){
 
     val openDialogModify = remember { mutableStateOf(false) }
     val feeditems = product.getIngredients().toMutableStateList()
 
-    AlertAddDialogIngredientComposable(openDialogAdd, product, feeditems, modifyViewModel)
-    AlertModifyDialogIngredientComposable(openDialogModify, product, feeditems, modifyViewModel)
+    AlertAddDialogIngredientComposable(openDialogAdd, product, feeditems, modifyViewModel, mainViewModel)
+    AlertModifyDialogIngredientComposable(openDialogModify, product, feeditems, modifyViewModel, mainViewModel)
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally

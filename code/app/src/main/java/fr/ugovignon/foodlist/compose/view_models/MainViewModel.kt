@@ -8,7 +8,8 @@ import fr.ugovignon.foodlist.classify.Classifier
 import fr.ugovignon.foodlist.classify.NoneClassifier
 import fr.ugovignon.foodlist.compose.search.SearchWidgetState
 import fr.ugovignon.foodlist.data.Ingredient
-import fr.ugovignon.foodlist.data.ProductList
+import fr.ugovignon.foodlist.managers.DataStoreProductManager
+import fr.ugovignon.foodlist.managers.ProductManager
 
 class MainViewModel : ViewModel() {
 
@@ -41,6 +42,10 @@ class MainViewModel : ViewModel() {
         return listFilter.toList()
     }
 
+    fun removeFilter(filter: Ingredient){
+        listFilter.remove(filter)
+    }
+
     fun addFilter(filter: Ingredient){
         if(!listFilter.contains(filter)){
             listFilter.add(filter)
@@ -55,5 +60,18 @@ class MainViewModel : ViewModel() {
 
 
     //Product list
-    val productList = ProductList()
+    val productManager = ProductManager()
+
+    fun checkIngredientFilter(ingredient: Ingredient){
+        productManager.getList().forEach {
+            if(it.getIngredients().contains(ingredient)){
+                return
+            }
+        }
+
+        removeFilter(ingredient)
+    }
+
+    //datastore
+    lateinit var dataStoreProductManager: DataStoreProductManager
 }

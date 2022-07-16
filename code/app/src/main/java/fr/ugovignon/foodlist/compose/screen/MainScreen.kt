@@ -1,14 +1,12 @@
 package fr.ugovignon.foodlist.compose.screen
 
+import android.content.Context
 import androidx.activity.result.ActivityResultLauncher
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -19,7 +17,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -27,14 +24,15 @@ import androidx.navigation.NavHostController
 import com.journeyapps.barcodescanner.ScanOptions
 import fr.ugovignon.foodlist.CardComposable
 import fr.ugovignon.foodlist.compose.view_models.MainViewModel
-import fr.ugovignon.foodlist.data.ProductList
+import fr.ugovignon.foodlist.managers.ProductManager
 
 @Composable
 fun MainScreen(
     navController: NavHostController,
-    productList: ProductList,
+    productManager: ProductManager,
     barcodeLauncher: ActivityResultLauncher<ScanOptions>,
-    mainViewModel: MainViewModel
+    mainViewModel: MainViewModel,
+    context: Context
 ) {
 
     val selectPaddingExt = 5
@@ -170,8 +168,8 @@ fun MainScreen(
                     top.linkTo(select.bottom)
                 }
         ) {
-            items(productList.getList(mainViewModel.searchTextState, mainViewModel.currentValueClassifier, mainViewModel.currentValueFilter)) { item ->
-                CardComposable(navController, item, productList)
+            items(productManager.getList(mainViewModel.searchTextState, mainViewModel.currentValueClassifier, mainViewModel.currentValueFilter)) { item ->
+                CardComposable(navController, item, productManager, mainViewModel, context)
             }
         }
 
