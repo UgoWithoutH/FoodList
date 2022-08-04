@@ -19,8 +19,8 @@ fun parsingData(data: String, httpClient: OkHttpClient): Product {
     val content = JSONObject(data)
 
     val contentProduct = content.getJSONObject("product")
+    val code = contentProduct.getString("code")
     val name = contentProduct.getString("product_name")
-
     var ingredients: MutableList<Ingredient>
 
     try {
@@ -42,7 +42,7 @@ fun parsingData(data: String, httpClient: OkHttpClient): Product {
 
     val image = downloadImage(url, httpClient)
 
-    return Product(name, ingredients, image)
+    return Product(code, name, ingredients, image)
 }
 
 private fun parsingIngredients(data: String): MutableList<Ingredient> {

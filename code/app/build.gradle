@@ -84,4 +84,6 @@ dependencies {
 
     // LiveData
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0"
+
+    implementation "com.github.mendhak:storage-chooser:1715784d34"
 }

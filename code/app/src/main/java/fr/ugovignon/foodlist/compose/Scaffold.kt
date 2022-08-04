@@ -55,7 +55,7 @@ fun ScaffoldComposable(
 
     Scaffold(
         scaffoldState = scaffoldState,
-        drawerContent = { DrawerComposable() },
+        drawerContent = { DrawerComposable(context, mainViewModel, httpClient) },
         topBar = {
             MainAppBar(
                 searchWidgetState = searchWidgetState,

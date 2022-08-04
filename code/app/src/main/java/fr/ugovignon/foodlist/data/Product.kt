@@ -7,7 +7,7 @@ import androidx.compose.runtime.toMutableStateList
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class Product(var name: String, private val ingredients: MutableList<Ingredient>, val bitmap: Bitmap?) : Parcelable{
+data class Product(val code: String, var name: String, private val ingredients: MutableList<Ingredient>, val bitmap: Bitmap?) : Parcelable{
 
     fun getIngredients() : List<Ingredient>{
         return ingredients.toList()
@@ -26,19 +26,10 @@ data class Product(var name: String, private val ingredients: MutableList<Ingred
     }
 
     fun isIngredientsNotEmpty() : Boolean{
-        return ingredients!!.isNotEmpty()
+        return ingredients.isNotEmpty()
     }
 
     override fun equals(other: Any?): Boolean {
-        return (other is Product) && other.name == this.name
+        return (other is Product) && other.code == this.code
     }
 }
-
-
-
-/*var product1 = Product("pain", null, )
-var product2 = Product("lait", null, null)
-var product3 = Product("kinder", null, null)
-var product4 = Product("jambon", null, null)
-var product5 = Product("blé", null, null)
-var product6 = Product("miel", null, null)*/

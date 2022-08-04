@@ -72,6 +72,9 @@ class MainViewModel : ViewModel() {
         removeFilter(ingredient)
     }
 
+    //loading
+    var loading = mutableStateOf(false)
+
     //datastore
     lateinit var dataStoreProductManager: DataStoreProductManager
 }

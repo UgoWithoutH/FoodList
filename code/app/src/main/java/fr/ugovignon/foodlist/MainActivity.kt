@@ -1,5 +1,6 @@
 package fr.ugovignon.foodlist
 
+import android.Manifest
 import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
@@ -7,7 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.viewModels
-import androidx.datastore.preferences.preferencesDataStore
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.journeyapps.barcodescanner.ScanContract
@@ -20,9 +21,9 @@ import fr.ugovignon.foodlist.data.parsingData
 import fr.ugovignon.foodlist.managers.DataStoreProductManager
 import fr.ugovignon.foodlist.ui.theme.FoodListTheme
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import okhttp3.*
 import java.io.IOException
+
 
 class MainActivity : ComponentActivity() {
 
@@ -70,6 +71,11 @@ class MainActivity : ComponentActivity() {
         return this
     }
 
+    var PERMISSIONS = arrayOf(
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -82,6 +88,12 @@ class MainActivity : ComponentActivity() {
         }
         else{
             mainViewModel.dataStoreProductManager = savedInstanceState.getParcelable<DataStoreProductManager>("dataStore")!!
+        }
+
+        if(hasPermissions(this, PERMISSIONS)){
+            var test = 1
+        }else{
+            ActivityCompat.requestPermissions(this, PERMISSIONS, 0)
         }
 
         setContent {

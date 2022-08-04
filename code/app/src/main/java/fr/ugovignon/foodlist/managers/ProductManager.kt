@@ -24,6 +24,10 @@ class ProductManager(){
         productList.remove(product)
     }
 
+    fun clear(){
+        productList.clear()
+    }
+
     fun getList() : SnapshotStateList<Product>{
         return productList.toMutableStateList()
     }

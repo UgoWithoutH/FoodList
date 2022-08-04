@@ -23,6 +23,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavHostController
 import com.journeyapps.barcodescanner.ScanOptions
 import fr.ugovignon.foodlist.CardComposable
+import fr.ugovignon.foodlist.compose.CircularIndeterminateProgressBar
 import fr.ugovignon.foodlist.compose.view_models.MainViewModel
 import fr.ugovignon.foodlist.managers.ProductManager
 
@@ -161,6 +162,8 @@ fun MainScreen(
             }
         }
 
+        CircularIndeterminateProgressBar(mainViewModel.loading.value)
+        
         LazyColumn(
             modifier = Modifier
                 .background(Color.Transparent)

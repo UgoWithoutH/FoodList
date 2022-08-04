@@ -38,6 +38,7 @@ class DataStoreProductManager : Parcelable {
                 val jsonArray = JSONArray(result)
                 for (i in 0 until jsonArray.length()) {
                     val jsonObject = jsonArray.getJSONObject(i)
+                    val code = jsonObject.getString("code")
                     val name = jsonObject.getString("name")
                     val image = getBitmapFromString(jsonObject.getString("image"))
                     val ingredients = mutableListOf<Ingredient>()
@@ -48,7 +49,7 @@ class DataStoreProductManager : Parcelable {
                         ingredients.add(Ingredient(jsonObjectIngredient.getString("name")))
                     }
 
-                    val product = Product(name, ingredients, image)
+                    val product = Product(code, name, ingredients, image)
                     productList.add(product)
                 }
             } catch (e: JSONException) {
@@ -69,6 +70,7 @@ class DataStoreProductManager : Parcelable {
                     val newJsonArray = JSONArray()
                     for (i in 0 until jsonArrayResult.length()) {
                         val jsonObject = jsonArrayResult.getJSONObject(i)
+                        val code = jsonObject.getString("code")
                         val name = jsonObject.getString("name")
                         val image = getBitmapFromString(jsonObject.getString("image"))
                         val ingredients = mutableListOf<Ingredient>()
@@ -79,7 +81,7 @@ class DataStoreProductManager : Parcelable {
                             ingredients.add(Ingredient(jsonObjectIngredient.getString("name")))
                         }
 
-                        val product = Product(name, ingredients, image)
+                        val product = Product(code,name, ingredients, image)
                         if (product != productToDelete) {
                             newJsonArray.put(jsonObject)
                         }
@@ -97,6 +99,7 @@ class DataStoreProductManager : Parcelable {
 
         try {
             val jsonArrayIngredients = JSONArray()
+            jsonObject.put("code", product.code)
             jsonObject.put("name", product.name)
             jsonObject.put("image", getStringFromBitmap(product.bitmap))
 
