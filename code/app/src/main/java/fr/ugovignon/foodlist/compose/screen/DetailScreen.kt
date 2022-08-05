@@ -52,7 +52,7 @@ fun DetailScreen(
                     key = "product",
                     value = product
                 )
-                modifyViewModel.title = product.name
+                modifyViewModel.initModel(product.name, product.getIngredients())
                 navController.navigate(Screen.ModifyScreen.route)
             }
         ) {

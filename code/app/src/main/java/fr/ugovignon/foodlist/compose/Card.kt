@@ -85,7 +85,7 @@ fun CardComposable(
                 IconButton(
                     modifier = Modifier.constrainAs(delete) {
                         top.linkTo(parent.top)
-                        end.linkTo(parent.end)
+                        start.linkTo(parent.start)
                     },
                     onClick = {
                         productManager.remove(product)

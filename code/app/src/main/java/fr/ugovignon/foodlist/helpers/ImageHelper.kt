@@ -1,4 +1,4 @@
-package fr.ugovignon.foodlist
+package fr.ugovignon.foodlist.helpers
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory

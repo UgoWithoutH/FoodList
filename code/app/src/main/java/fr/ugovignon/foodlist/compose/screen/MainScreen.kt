@@ -172,6 +172,9 @@ fun MainScreen(
                 }
         ) {
             items(productManager.getList(mainViewModel.searchTextState, mainViewModel.currentValueClassifier, mainViewModel.currentValueFilter)) { item ->
+                if(mainViewModel.loading.value){
+                    mainViewModel.loading.value = false
+                }
                 CardComposable(navController, item, productManager, mainViewModel, context)
             }
         }

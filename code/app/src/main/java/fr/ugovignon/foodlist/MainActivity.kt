@@ -14,6 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanOptions
 import fr.ugovignon.foodlist.compose.ScaffoldComposable
+import fr.ugovignon.foodlist.compose.hasPermissions
 import fr.ugovignon.foodlist.compose.view_models.AddViewModel
 import fr.ugovignon.foodlist.compose.view_models.MainViewModel
 import fr.ugovignon.foodlist.compose.view_models.ModifyViewModel
@@ -83,7 +84,7 @@ class MainActivity : ComponentActivity() {
             mainViewModel.dataStoreProductManager = DataStoreProductManager()
 
             lifecycleScope.launchWhenStarted {
-                mainViewModel.productManager.addAll(mainViewModel.dataStoreProductManager.getProducts(getContext()))
+                mainViewModel.productManager.addAll(mainViewModel.dataStoreProductManager.getProducts(getContext(), mainViewModel))
             }
         }
         else{

@@ -1,18 +1,9 @@
 package fr.ugovignon.foodlist.data
 
-import android.graphics.BitmapFactory
-import fr.ugovignon.foodlist.downloadImage
+import fr.ugovignon.foodlist.helpers.downloadImage
 import okhttp3.*
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import org.json.JSONArray
 import org.json.JSONObject
-import okhttp3.RequestBody.Companion.toRequestBody
-import okio.ByteString.Companion.encode
-import java.io.IOException
 import java.lang.Exception
-import java.nio.charset.Charset
-import java.util.*
-import java.util.concurrent.CountDownLatch
 
 fun parsingData(data: String, httpClient: OkHttpClient): Product {
 
@@ -20,7 +11,9 @@ fun parsingData(data: String, httpClient: OkHttpClient): Product {
 
     val contentProduct = content.getJSONObject("product")
     val code = contentProduct.getString("code")
-    val name = contentProduct.getString("product_name")
+    val name = contentProduct.getString("product_name").replaceFirstChar {
+        it.uppercase()
+    }
     var ingredients: MutableList<Ingredient>
 
     try {

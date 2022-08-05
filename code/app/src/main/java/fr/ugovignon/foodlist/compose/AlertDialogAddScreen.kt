@@ -1,7 +1,12 @@
 package fr.ugovignon.foodlist.compose
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
+import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -9,28 +14,49 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import fr.ugovignon.foodlist.compose.view_models.AddViewModel
 import fr.ugovignon.foodlist.compose.view_models.MainViewModel
 import fr.ugovignon.foodlist.compose.view_models.ModifyViewModel
 import fr.ugovignon.foodlist.data.Ingredient
 import fr.ugovignon.foodlist.data.Product
 
 @Composable
-fun AlertAddDialogIngredientComposable(
+fun AlertAddScreenDialogComposable(
     openDialog: MutableState<Boolean>,
     snapshotStateList: SnapshotStateList<Ingredient>,
-    modifyViewModel: ModifyViewModel,
-    mainViewModel: MainViewModel
+    addViewModel: AddViewModel,
 ) {
     if (openDialog.value) {
         AlertDialog(
             onDismissRequest = { openDialog.value = false },
             modifier = Modifier
-                .padding(16.dp),
+                .padding(16.dp)
+                .background(Color(0xFFD2A8D3)),
+            title = {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Button(
+                        colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF824083)),
+                        onClick = {
+                            addViewModel.removeIngredientSelected()
+                            snapshotStateList.clear()
+                            snapshotStateList.addAll(addViewModel.ingredients)
+                            openDialog.value = false
+                        }) {
+                        Text(
+                            text = "Supprimer",
+                            color = Color.White
+                        )
+                    }
+                }
+            },
             text = {
                 OutlinedTextField(
-                    value = modifyViewModel.addIngredientName,
+                    value = addViewModel.ingredientTextToRename,
                     onValueChange = {
-                        modifyViewModel.addIngredientName = it
+                        addViewModel.ingredientTextToRename = it
                     },
                     label = { Text(text = "nom ingrédient") },
                     modifier = Modifier.fillMaxWidth(),
@@ -58,8 +84,7 @@ fun AlertAddDialogIngredientComposable(
                     Button(
                         colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF824083)),
                         onClick = { openDialog.value = false },
-                        modifier = Modifier
-                            .constrainAs(cancel) {
+                        modifier = Modifier.constrainAs(cancel) {
                             start.linkTo(parent.start)
                         }
                     ) {
@@ -68,21 +93,17 @@ fun AlertAddDialogIngredientComposable(
                             color = Color.White
                         )
                     }
-
                     Button(
                         colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF824083)),
                         modifier = Modifier.constrainAs(valid) {
                             end.linkTo(parent.end)
                         },
                         onClick = {
-                            if (modifyViewModel.addIngredientName.isNotBlank()) {
-                                var ingredient = Ingredient(modifyViewModel.addIngredientName)
-                                modifyViewModel.addIngredient(ingredient)
-                                //mainViewModel.addFilter(ingredient)
+                            if (addViewModel.renameIngredientSelected()) {
                                 snapshotStateList.clear()
-                                snapshotStateList.addAll(modifyViewModel.ingredients)
+                                snapshotStateList.addAll(addViewModel.ingredients)
+                                openDialog.value = false
                             }
-                            openDialog.value = false
                         }) {
                         Text(
                             text = "Valider",

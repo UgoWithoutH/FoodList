@@ -3,14 +3,10 @@ package fr.ugovignon.foodlist.compose.screen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Create
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,18 +17,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavHostController
-import fr.ugovignon.foodlist.compose.LazyColumnIngredients
 import fr.ugovignon.foodlist.compose.LazyColumnModifyIngredients
 import fr.ugovignon.foodlist.compose.view_models.MainViewModel
 import fr.ugovignon.foodlist.compose.view_models.ModifyViewModel
 import fr.ugovignon.foodlist.data.Product
-import okhttp3.internal.wait
 
 @Composable
 fun ModifyScreen(
@@ -44,26 +36,43 @@ fun ModifyScreen(
 
     val openDialogAdd = remember { mutableStateOf(false) }
 
-    ConstraintLayout(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFD2A8D3))
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(vertical = 40.dp),
+                .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Button(
+                    modifier = Modifier.padding(top = 15.dp, end = 15.dp, bottom = 20.dp),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary),
+                    shape = RoundedCornerShape(10.dp),
+                    onClick = {
+                        if(modifyViewModel.validationModification(product, mainViewModel)) {
+                            navController.popBackStack()
+                        }
+                    }
+                ) {
+                    Text("valider")
+                }
+            }
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 OutlinedTextField(
-                    value = modifyViewModel.title,
+                    value = modifyViewModel.name,
                     onValueChange = {
-                        modifyViewModel.title = it
+                        modifyViewModel.name = it
                     },
                     label = { Text(text = "nom du produit") },
                     modifier = Modifier.fillMaxWidth(0.8f),
@@ -76,16 +85,6 @@ fun ModifyScreen(
                         textColor = Color.Black
                     )
                 )
-                Spacer(modifier = Modifier.width(10.dp))
-                IconButton(
-                    onClick = { product.name = modifyViewModel.title }) {
-                    Icon(
-                        modifier = Modifier.size(30.dp),
-                        imageVector = Icons.Default.Check,
-                        contentDescription = "valider nom",
-                        tint = Color(0xFF317D4B),
-                    )
-                }
             }
             Spacer(modifier = Modifier.height(40.dp))
             Row(
@@ -128,9 +127,7 @@ fun ModifyScreen(
                 }
             }
             Spacer(modifier = Modifier.height(25.dp))
-            if (product.isIngredientsNotEmpty()) {
-                LazyColumnModifyIngredients(product, modifyViewModel, mainViewModel, openDialogAdd)
-            }
+            LazyColumnModifyIngredients(product.getIngredients(), modifyViewModel, mainViewModel, openDialogAdd)
         }
     }
 }

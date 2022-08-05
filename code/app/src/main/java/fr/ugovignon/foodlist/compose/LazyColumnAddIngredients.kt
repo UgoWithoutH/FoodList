@@ -11,38 +11,34 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import fr.ugovignon.foodlist.compose.view_models.MainViewModel
-import fr.ugovignon.foodlist.compose.view_models.ModifyViewModel
+import fr.ugovignon.foodlist.compose.view_models.AddViewModel
 import fr.ugovignon.foodlist.data.Ingredient
 
 @Composable
-fun LazyColumnModifyIngredients(ingredients: List<Ingredient>,
-                                modifyViewModel: ModifyViewModel,
-                                mainViewModel: MainViewModel,
-                                openDialogAdd: MutableState<Boolean>){
-
+fun LazyColumnAddIngredients(
+    addViewModel: AddViewModel,
+    feeditems: SnapshotStateList<Ingredient>
+) {
     val openDialogModify = remember { mutableStateOf(false) }
-    val feeditems = ingredients.toMutableStateList()
 
-    AlertAddDialogIngredientComposable(openDialogAdd, feeditems, modifyViewModel, mainViewModel)
-    AlertModifyDialogIngredientComposable(openDialogModify, feeditems, modifyViewModel, mainViewModel)
+    AlertAddScreenDialogComposable(openDialogModify, feeditems, addViewModel)
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
-        items(feeditems){
-                item ->
+    ) {
+        items(feeditems) { item ->
             Card(
-                shape = RoundedCornerShape(20.dp),
-                elevation = 4.dp,
                 modifier = Modifier.clickable {
-                    modifyViewModel.ingredientSelected = item
-                    modifyViewModel.modifyIngredientName = item.name
+                    addViewModel.ingredientSelected = item
+                    addViewModel.ingredientTextToRename = item.name
                     openDialogModify.value = !openDialogModify.value
-                }
+                },
+                shape = RoundedCornerShape(20.dp),
+                elevation = 4.dp
             ) {
                 Text(
                     modifier = Modifier.padding(10.dp),

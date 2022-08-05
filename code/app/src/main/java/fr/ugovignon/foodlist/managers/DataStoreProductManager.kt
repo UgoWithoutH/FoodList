@@ -2,17 +2,15 @@ package fr.ugovignon.foodlist.managers
 
 import android.content.Context
 import android.os.Parcelable
-import androidx.datastore.dataStore
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import fr.ugovignon.foodlist.compose.view_models.MainViewModel
 import fr.ugovignon.foodlist.data.Ingredient
 import fr.ugovignon.foodlist.data.Product
-import fr.ugovignon.foodlist.getBitmapFromString
-import fr.ugovignon.foodlist.getStringFromBitmap
-import kotlinx.coroutines.flow.Flow
+import fr.ugovignon.foodlist.helpers.getBitmapFromString
+import fr.ugovignon.foodlist.helpers.getStringFromBitmap
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.parcelize.Parcelize
 import org.json.JSONArray
 import org.json.JSONException
@@ -27,7 +25,7 @@ class DataStoreProductManager : Parcelable {
 
     private val Context.dataStore by preferencesDataStore("app")
 
-    suspend fun getProducts(context: Context): List<Product> {
+    suspend fun getProducts(context: Context, mainViewModel: MainViewModel): List<Product> {
 
         val productList = mutableListOf<Product>()
 
@@ -51,6 +49,7 @@ class DataStoreProductManager : Parcelable {
 
                     val product = Product(code, name, ingredients, image)
                     productList.add(product)
+                    mainViewModel.addFilters(product.getIngredients())
                 }
             } catch (e: JSONException) {
                 e.printStackTrace();

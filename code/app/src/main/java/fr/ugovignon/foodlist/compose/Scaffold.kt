@@ -24,7 +24,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.journeyapps.barcodescanner.ScanOptions
-import fr.ugovignon.foodlist.DrawerComposable
 import fr.ugovignon.foodlist.R
 import fr.ugovignon.foodlist.compose.navigation.SetUpNavGraph
 import fr.ugovignon.foodlist.compose.view_models.MainViewModel
@@ -55,7 +54,15 @@ fun ScaffoldComposable(
 
     Scaffold(
         scaffoldState = scaffoldState,
-        drawerContent = { DrawerComposable(context, mainViewModel, httpClient) },
+        drawerContent = {
+            DrawerComposable(
+                context,
+                mainViewModel,
+                httpClient,
+                scope,
+                scaffoldState
+            )
+        },
         topBar = {
             MainAppBar(
                 searchWidgetState = searchWidgetState,
