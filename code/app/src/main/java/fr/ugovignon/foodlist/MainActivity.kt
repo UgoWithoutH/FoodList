@@ -74,7 +74,8 @@ class MainActivity : ComponentActivity() {
 
     var PERMISSIONS = arrayOf(
         Manifest.permission.READ_EXTERNAL_STORAGE,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        Manifest.permission.CAMERA
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,9 +92,7 @@ class MainActivity : ComponentActivity() {
             mainViewModel.dataStoreProductManager = savedInstanceState.getParcelable<DataStoreProductManager>("dataStore")!!
         }
 
-        if(hasPermissions(this, PERMISSIONS)){
-            var test = 1
-        }else{
+        if(!hasPermissions(this, PERMISSIONS)){
             ActivityCompat.requestPermissions(this, PERMISSIONS, 0)
         }
 

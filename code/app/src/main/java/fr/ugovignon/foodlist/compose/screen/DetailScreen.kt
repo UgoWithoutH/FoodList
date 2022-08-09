@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -23,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavHostController
+import fr.ugovignon.foodlist.R
 import fr.ugovignon.foodlist.compose.LazyColumnIngredients
 import fr.ugovignon.foodlist.compose.view_models.ModifyViewModel
 import fr.ugovignon.foodlist.data.Product
@@ -37,7 +39,7 @@ fun DetailScreen(
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFD2A8D3))
+            .background(colorResource(R.color.custom_pink))
     ) {
         val (
             modify

@@ -18,11 +18,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavHostController
 import com.journeyapps.barcodescanner.ScanOptions
 import fr.ugovignon.foodlist.CardComposable
+import fr.ugovignon.foodlist.R
 import fr.ugovignon.foodlist.compose.CircularIndeterminateProgressBar
 import fr.ugovignon.foodlist.compose.view_models.MainViewModel
 import fr.ugovignon.foodlist.managers.ProductManager
@@ -35,9 +37,6 @@ fun MainScreen(
     mainViewModel: MainViewModel,
     context: Context
 ) {
-
-    val selectPaddingExt = 5
-    val selectPaddingInt = 8
 
     ConstraintLayout(
         modifier = Modifier
@@ -63,7 +62,7 @@ fun MainScreen(
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(10.dp))
-                    .background(Color(0xFF824083))
+                    .background(colorResource(R.color.custom_mauve))
             ) {
                 Row(
                     modifier = Modifier
@@ -114,7 +113,7 @@ fun MainScreen(
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(10.dp))
-                    .background(Color(0xFF824083))
+                    .background(colorResource(R.color.custom_mauve))
             ) {
                 Row(
                     modifier = Modifier
@@ -123,7 +122,7 @@ fun MainScreen(
                         }
                         .fillMaxWidth(0.85f)
                         .height(50.dp)
-                        .background(Color(0xFF824083)),
+                        .background(colorResource(R.color.custom_mauve)),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -184,7 +183,7 @@ fun MainScreen(
                 val options = ScanOptions().setBeepEnabled(false)
                 barcodeLauncher.launch(options)
             },
-            backgroundColor = Color(0xFF824083),
+            backgroundColor = colorResource(R.color.custom_mauve),
             modifier = Modifier
                 .constrainAs(fab) {
                     bottom.linkTo(parent.bottom, margin = 16.dp)
@@ -202,7 +201,7 @@ fun MainScreen(
             onClick = {
                 navController.navigate(Screen.AddScreen.route)
             },
-            backgroundColor = Color(0xFF824083),
+            backgroundColor = colorResource(R.color.custom_mauve),
             modifier = Modifier.constrainAs(fab2) {
                 bottom.linkTo(fab.top, margin = 16.dp)
                 end.linkTo(parent.end, margin = 16.dp)

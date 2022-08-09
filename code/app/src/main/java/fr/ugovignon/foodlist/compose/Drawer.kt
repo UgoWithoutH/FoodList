@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
@@ -61,7 +62,7 @@ fun DrawerComposable(
         )
         Spacer(modifier = Modifier.height(50.dp))
         Button(
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFD2A8D3)),
+            colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(R.color.custom_pink)),
             onClick = {
                 showFilePicker(
                     context,
@@ -74,14 +75,13 @@ fun DrawerComposable(
             modifier = Modifier
                 .fillMaxWidth(0.90f)
                 .height(50.dp)
-                .background(Color(0xFFD2A8D3))
                 .clip(RoundedCornerShape(10.dp))
         ) {
             Text(text = "Importer des produits")
         }
         Spacer(modifier = Modifier.size(30.dp))
         Button(
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFD2A8D3)),
+            colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(R.color.custom_pink)),
             onClick = {
                 showDirectoryPicker(
                     context,
@@ -93,7 +93,6 @@ fun DrawerComposable(
             modifier = Modifier
                 .fillMaxWidth(0.90f)
                 .height(50.dp)
-                .background(Color(0xFFD2A8D3))
                 .clip(RoundedCornerShape(10.dp))
         ) {
             Text(text = "Exporter des produits")
@@ -228,27 +227,3 @@ fun readFile(
         e.printStackTrace();
     }
 }
-
-/*val request = Request.Builder()
-                .url("https://fr.openfoodfacts.org/api/v2/product/${productCode}")
-                .build()
-
-            httpClient.newCall(request).enqueue(object : Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    e.printStackTrace()
-                }
-
-                override fun onResponse(call: Call, response: Response) {
-                    response.use {
-                        if (!response.isSuccessful) throw IOException("Unexpected code $response")
-
-                        var product = parsingData(response.body!!.string(), httpClient)
-                        mainViewModel.productManager.add(product)
-                        mainViewModel.addFilters(product.getIngredients())
-                        coroutineScope.launch {
-                            mainViewModel.dataStoreProductManager.saveProduct(product, context)
-                        }
-                    }
-                }
-            })
- */

@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
@@ -156,7 +157,7 @@ fun DefaultAppBar(
                 )
             }
         },
-        backgroundColor = Color(0xFF824083),
+        backgroundColor = colorResource(R.color.custom_mauve),
         navigationIcon = {
             IconButton(onClick = {
                 scope.launch { scaffoldState.drawerState.open() }
@@ -192,7 +193,7 @@ fun SearchAppBar(
             .fillMaxWidth()
             .height(56.dp),
         elevation = AppBarDefaults.TopAppBarElevation,
-        color = Color(0xFF824083)
+        color = colorResource(R.color.custom_mauve)
     ) {
         TextField(
             modifier = Modifier
@@ -205,7 +206,7 @@ fun SearchAppBar(
                 Text(
                     modifier = Modifier
                         .alpha(ContentAlpha.medium),
-                    text = "Search here...",
+                    text = "Rechercher ici...",
                     color = Color.White
                 )
             },

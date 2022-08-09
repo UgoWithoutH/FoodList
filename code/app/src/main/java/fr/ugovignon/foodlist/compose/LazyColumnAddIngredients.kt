@@ -25,7 +25,12 @@ fun LazyColumnAddIngredients(
 ) {
     val openDialogModify = remember { mutableStateOf(false) }
 
-    AlertAddScreenDialogComposable(openDialogModify, feeditems, addViewModel)
+    if(openDialogModify.value) {
+        CustomDialogAddScreenModifyIngredient({
+            openDialogModify.value = it
+        }, feeditems, addViewModel)
+    }
+
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally

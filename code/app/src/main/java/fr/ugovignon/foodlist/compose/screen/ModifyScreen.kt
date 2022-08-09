@@ -10,17 +10,20 @@ import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import fr.ugovignon.foodlist.R
 import fr.ugovignon.foodlist.compose.LazyColumnModifyIngredients
 import fr.ugovignon.foodlist.compose.view_models.MainViewModel
 import fr.ugovignon.foodlist.compose.view_models.ModifyViewModel
@@ -39,7 +42,7 @@ fun ModifyScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFD2A8D3))
+            .background(colorResource(R.color.custom_pink))
     ) {
         Column(
             modifier = Modifier
@@ -127,7 +130,7 @@ fun ModifyScreen(
                 }
             }
             Spacer(modifier = Modifier.height(25.dp))
-            LazyColumnModifyIngredients(product.getIngredients(), modifyViewModel, mainViewModel, openDialogAdd)
+            LazyColumnModifyIngredients(product.getIngredients(), modifyViewModel, mainViewModel, openDialogAdd, modifyViewModel.ingredients.toMutableStateList())
         }
     }
 }

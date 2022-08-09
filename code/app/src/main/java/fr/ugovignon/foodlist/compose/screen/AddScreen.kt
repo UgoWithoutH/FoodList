@@ -1,6 +1,11 @@
 package fr.ugovignon.foodlist.compose.screen
 
 import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
@@ -12,18 +17,23 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavHostController
 import fr.ugovignon.foodlist.Constants
 import fr.ugovignon.foodlist.R
+import fr.ugovignon.foodlist.compose.CustomDialogPictureComposable
 import fr.ugovignon.foodlist.compose.LazyColumnAddIngredients
 import fr.ugovignon.foodlist.compose.view_models.AddViewModel
 import fr.ugovignon.foodlist.compose.view_models.MainViewModel
@@ -38,18 +48,21 @@ fun AddScreen(
 ) {
 
     val feeditems = addViewModel.ingredients.toMutableStateList()
+    var imageUri = remember { mutableStateOf<Uri?>(null) }
     val bitmap = remember { mutableStateOf<Bitmap?>(null) }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    val launcher =
-        rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) {
-            bitmap.value = it
-        }
+    val showDialog = remember { mutableStateOf(false) }
 
+    if (showDialog.value) {
+        CustomDialogPictureComposable(bitmap, imageUri) {
+            showDialog.value = it
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFD2A8D3)),
+            .background(colorResource(R.color.custom_pink)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Column(
@@ -128,24 +141,46 @@ fun AddScreen(
             )
             Spacer(modifier = Modifier.height(50.dp))
 
-            if (bitmap.value == null) {
-                IconButton(
-                    modifier = Modifier
-                        .size(150.dp)
-                        .background(Color(0xFF824083), CircleShape),
-                    onClick = {
-                        launcher.launch()
+            if (imageUri.value != null) {
+                imageUri.let {
+                    if (Build.VERSION.SDK_INT < 28) {
+                        bitmap.value = MediaStore.Images
+                            .Media.getBitmap(context.contentResolver, it.value)
+                    } else {
+                        val source = ImageDecoder.createSource(context.contentResolver, it.value!!)
+                        bitmap.value = ImageDecoder.decodeBitmap(source)
                     }
+                }
+            }
+
+            if (bitmap.value == null) {
+                Button(
+                    modifier = Modifier
+                        .size(150.dp),
+                    onClick = {
+                        showDialog.value = true
+                    },
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF824083)),
+                    elevation = ButtonDefaults.elevation(
+                        defaultElevation = 10.dp,
+                        pressedElevation = 0.dp,
+                        disabledElevation = 10.dp
+                    )
                 ) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
                         Icon(
-                            modifier = Modifier.size(60.dp),
-                            painter = painterResource(id = R.drawable.ic_baseline_photo_camera_24),
+                            modifier = Modifier.size(50.dp),
+                            imageVector = Icons.Filled.CameraAlt,
                             contentDescription = "image produit",
-                            tint = Color.Black
+                            tint = Color.White
+                        )
+                        Text(
+                            text = "Sélectionner une image",
+                            textAlign = TextAlign.Center
                         )
                     }
                 }
@@ -153,7 +188,7 @@ fun AddScreen(
                 Button(
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
                     onClick = {
-                        launcher.launch()
+                        showDialog.value = true
                     }
                 ) {
                     bitmap.let {

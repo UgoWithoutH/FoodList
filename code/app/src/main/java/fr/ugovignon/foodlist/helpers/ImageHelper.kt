@@ -1,11 +1,14 @@
 package fr.ugovignon.foodlist.helpers
 
+import android.content.ContentResolver
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.util.Base64
 import okhttp3.*
 import java.io.ByteArrayOutputStream
 import java.io.IOException
+import java.io.InputStream
 import java.util.concurrent.CountDownLatch
 
 
