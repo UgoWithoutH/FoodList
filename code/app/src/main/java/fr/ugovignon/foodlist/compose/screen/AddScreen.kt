@@ -1,18 +1,11 @@
 package fr.ugovignon.foodlist.compose.screen
 
 import android.graphics.Bitmap
-import android.graphics.ImageDecoder
-import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
+import android.graphics.Bitmap.createScaledBitmap
 import android.util.Log
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.launch
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -21,12 +14,12 @@ import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -38,6 +31,8 @@ import fr.ugovignon.foodlist.compose.LazyColumnAddIngredients
 import fr.ugovignon.foodlist.compose.view_models.AddViewModel
 import fr.ugovignon.foodlist.compose.view_models.MainViewModel
 import fr.ugovignon.foodlist.data.Product
+import fr.ugovignon.foodlist.helpers.getBitmapFromUri
+import fr.ugovignon.foodlist.helpers.resizeBitmap
 import kotlinx.coroutines.launch
 
 @Composable
@@ -48,14 +43,23 @@ fun AddScreen(
 ) {
 
     val feeditems = addViewModel.ingredients.toMutableStateList()
-    var imageUri = remember { mutableStateOf<Uri?>(null) }
-    val bitmap = remember { mutableStateOf<Bitmap?>(null) }
+    val hasImage = remember {
+        mutableStateOf(false)
+    }
+
+    var bitmap = remember {
+        mutableStateOf<Bitmap?>(null)
+    }
+
+    val imageBitmap = remember {
+        mutableStateOf<ImageBitmap?>(null)
+    }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val showDialog = remember { mutableStateOf(false) }
 
     if (showDialog.value) {
-        CustomDialogPictureComposable(bitmap, imageUri) {
+        CustomDialogPictureComposable(hasImage, bitmap, imageBitmap) {
             showDialog.value = it
         }
     }
@@ -107,9 +111,8 @@ fun AddScreen(
                                 it.uppercase()
                             },
                             addViewModel.ingredients,
-                            bitmap.value,
+                            resizeBitmap(bitmap.value!!, 300, 300)
                         )
-
                         if (mainViewModel.productManager.add(product)) {
                             mainViewModel.addFilters(product.getIngredients())
                             scope.launch {
@@ -141,33 +144,28 @@ fun AddScreen(
             )
             Spacer(modifier = Modifier.height(50.dp))
 
-            if (imageUri.value != null) {
-                imageUri.let {
-                    if (Build.VERSION.SDK_INT < 28) {
-                        bitmap.value = MediaStore.Images
-                            .Media.getBitmap(context.contentResolver, it.value)
-                    } else {
-                        val source = ImageDecoder.createSource(context.contentResolver, it.value!!)
-                        bitmap.value = ImageDecoder.decodeBitmap(source)
-                    }
-                }
-            }
 
-            if (bitmap.value == null) {
-                Button(
-                    modifier = Modifier
-                        .size(150.dp),
-                    onClick = {
-                        showDialog.value = true
-                    },
-                    shape = RoundedCornerShape(10.dp),
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF824083)),
-                    elevation = ButtonDefaults.elevation(
-                        defaultElevation = 10.dp,
-                        pressedElevation = 0.dp,
-                        disabledElevation = 10.dp
+            Button(
+                modifier = Modifier
+                    .size(150.dp),
+                onClick = {
+                    showDialog.value = true
+                },
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF824083)),
+                elevation = ButtonDefaults.elevation(
+                    defaultElevation = 10.dp,
+                    pressedElevation = 0.dp,
+                    disabledElevation = 10.dp
+                )
+            ) {
+                if (hasImage.value) {
+                    Image(
+                        bitmap = imageBitmap.value!!,
+                        contentDescription = null,
+                        modifier = Modifier.size(200.dp)
                     )
-                ) {
+                } else {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
@@ -184,26 +182,7 @@ fun AddScreen(
                         )
                     }
                 }
-            } else {
-                Button(
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-                    onClick = {
-                        showDialog.value = true
-                    }
-                ) {
-                    bitmap.let {
-                        val data = it.value
-                        if (data != null) {
-                            Image(
-                                bitmap = data.asImageBitmap(),
-                                contentDescription = null,
-                                modifier = Modifier.size(200.dp)
-                            )
-                        }
-                    }
-                }
             }
-
 
             Spacer(modifier = Modifier.height(20.dp))
             Row(

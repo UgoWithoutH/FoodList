@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.launch
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,9 +13,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -25,24 +29,42 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import fr.ugovignon.foodlist.R
+import fr.ugovignon.foodlist.helpers.ComposeFileProvider
+import fr.ugovignon.foodlist.helpers.getBitmapFromUri
 
 @Composable
 fun CustomDialogPictureComposable(
+    hasImage: MutableState<Boolean>,
     bitmap: MutableState<Bitmap?>,
-    imageUri: MutableState<Uri?>,
+    imageBitmap: MutableState<ImageBitmap?>,
     setShowDialog: (Boolean) -> Unit
 ) {
 
-    val launcherCamera = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) {
-        bitmap.value = it
-        setShowDialog(false)
+    val context = LocalContext.current
+
+    var imageUri = remember {
+        mutableStateOf<Uri?>(null)
     }
 
-    val launcherGallery =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
-            imageUri.value = uri
+    val imagePicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri ->
+            hasImage.value = uri != null
+            bitmap.value  = getBitmapFromUri(context.contentResolver, uri!!)
+            imageBitmap.value = bitmap.value!!.asImageBitmap()
             setShowDialog(false)
         }
+    )
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture(),
+        onResult = { success ->
+            hasImage.value = success
+            bitmap.value  = getBitmapFromUri(context.contentResolver, imageUri.value!!)
+            imageBitmap.value = bitmap.value!!.asImageBitmap()
+            setShowDialog(false)
+        }
+    )
 
     Dialog(onDismissRequest = { setShowDialog(false) }) {
         Surface(
@@ -108,7 +130,7 @@ fun CustomDialogPictureComposable(
                             shape = RoundedCornerShape(10.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(R.color.custom_pink)),
                             onClick = {
-                                launcherGallery.launch("image/*")
+                                imagePicker.launch("image/*")
                             }
                         ) {
                             Column(
@@ -134,7 +156,9 @@ fun CustomDialogPictureComposable(
                             shape = RoundedCornerShape(10.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(R.color.custom_pink)),
                             onClick = {
-                                launcherCamera.launch()
+                                val uri = ComposeFileProvider.getImageUri(context)
+                                imageUri.value = uri
+                                cameraLauncher.launch(uri)
                             }
                         ) {
                             Column(

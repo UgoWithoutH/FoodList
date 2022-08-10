@@ -1,8 +1,9 @@
 package fr.ugovignon.foodlist.helpers
 
+import android.R.attr
 import android.content.ContentResolver
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.graphics.*
+import android.graphics.Bitmap.createBitmap
 import android.net.Uri
 import android.util.Base64
 import okhttp3.*
@@ -54,4 +55,34 @@ fun getStringFromBitmap(bitmapPicture: Bitmap?): String {
 fun getBitmapFromString(stringPicture: String): Bitmap? {
     val decodedString = Base64.decode(stringPicture, Base64.DEFAULT)
     return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
+}
+
+fun getBitmapFromUri(cr: ContentResolver, url: Uri): Bitmap? {
+    val input: InputStream? = cr.openInputStream(url)
+    val bitmap = BitmapFactory.decodeStream(input)
+    input!!.close()
+    return bitmap
+}
+
+fun resizeBitmap(bitmap: Bitmap, newWidth: Int, newHeight: Int) : Bitmap{
+    val scaledBitmap = createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888)
+
+    val ratioX: Float = newWidth / bitmap.width.toFloat()
+    val ratioY: Float = newHeight / bitmap.height.toFloat()
+    val middleX: Float = newWidth / 2.0f
+    val middleY: Float = newHeight / 2.0f
+
+    val scaleMatrix = Matrix()
+    scaleMatrix.setScale(ratioX, ratioY, middleX, middleY)
+
+    val canvas = Canvas(scaledBitmap)
+    canvas.setMatrix(scaleMatrix)
+    canvas.drawBitmap(
+        bitmap,
+        middleX - bitmap.width / 2,
+        middleY - bitmap.height / 2,
+        Paint(Paint.FILTER_BITMAP_FLAG)
+    )
+
+    return scaledBitmap
 }
