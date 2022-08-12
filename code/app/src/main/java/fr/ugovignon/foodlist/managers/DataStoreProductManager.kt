@@ -80,10 +80,58 @@ class DataStoreProductManager : Parcelable {
                             ingredients.add(Ingredient(jsonObjectIngredient.getString("name")))
                         }
 
-                        val product = Product(code,name, ingredients, image)
+                        val product = Product(code, name, ingredients, image)
                         if (product != productToDelete) {
                             newJsonArray.put(jsonObject)
                         }
+                    }
+                    settings[PreferencesKeys.PRODUCTS] = newJsonArray.toString()
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
+
+    suspend fun saveProductModified(newProduct: Product, olderProduct: Product, context: Context) {
+        context.dataStore.edit { settings ->
+            val result = settings[PreferencesKeys.PRODUCTS]
+
+            if (result != null) {
+                try {
+                    val jsonArrayResult = JSONArray(result)
+                    val newJsonArray = JSONArray()
+                    for (i in 0 until jsonArrayResult.length()) {
+                        var jsonObject = jsonArrayResult.getJSONObject(i)
+                        val code = jsonObject.getString("code")
+                        val name = jsonObject.getString("name")
+                        val image = getBitmapFromString(jsonObject.getString("image"))
+                        val ingredients = mutableListOf<Ingredient>()
+
+                        val jsonArrayIngredients = jsonObject.getJSONArray("ingredients")
+                        for (j in 0 until jsonArrayIngredients.length()) {
+                            val jsonObjectIngredient = jsonArrayIngredients.getJSONObject(j)
+                            ingredients.add(Ingredient(jsonObjectIngredient.getString("name")))
+                        }
+
+                        val product = Product(code, name, ingredients, image)
+
+                        if (product == olderProduct) {
+                            jsonObject = JSONObject()
+                            jsonObject.put("code", newProduct.code)
+                            jsonObject.put("name", newProduct.name)
+                            jsonObject.put("image", getStringFromBitmap(newProduct.bitmap))
+
+                            newProduct.getIngredients().forEach {
+                                val ingredient = JSONObject()
+                                ingredient.put("name", it.name)
+
+                                jsonArrayIngredients.put(ingredient)
+                            }
+                            jsonObject.put("ingredients", jsonArrayIngredients)
+                        }
+
+                        newJsonArray.put(jsonObject)
                     }
                     settings[PreferencesKeys.PRODUCTS] = newJsonArray.toString()
                 } catch (e: JSONException) {

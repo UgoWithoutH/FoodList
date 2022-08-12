@@ -9,6 +9,8 @@ import fr.ugovignon.foodlist.data.Product
 
 class ModifyViewModel : ViewModel() {
 
+    var olderProduct by mutableStateOf<Product?>(null)
+
     var name by mutableStateOf("")
 
     var ingredientSelected: Ingredient? = null
@@ -23,26 +25,45 @@ class ModifyViewModel : ViewModel() {
 
     var ingredientAdded = mutableListOf<Ingredient>()
 
-    fun initModel(_name: String, _ingredients: List<Ingredient>){
+    fun initModel(_name: String, _ingredients: List<Ingredient>) {
         name = _name
         ingredients = _ingredients.toMutableList()
     }
 
-    fun addIngredient(ingredient: Ingredient){
-        if(!ingredients.contains(ingredient)){
+    fun addIngredient(ingredient: Ingredient) {
+        if (!ingredients.contains(ingredient)) {
             ingredientAdded.add(ingredient)
             ingredients.add(ingredient)
         }
     }
 
-    fun removeIngredientSelected(){
+    fun removeIngredientSelected() {
         ingredientsRemoved.add(ingredientSelected!!)
         ingredients.remove(ingredientSelected)
     }
 
-    fun validationModification(product: Product, mainViewModel: MainViewModel) : Boolean{
-        if(name.isNotBlank() && name.isNotEmpty()){
-            product.name = name
+    fun validationModification(product: Product, mainViewModel: MainViewModel): Boolean {
+
+        olderProduct = Product(
+            product.code,
+            product.name,
+            product.getIngredients().toMutableList(),
+            product.bitmap
+        )
+
+        if (name.isNotBlank() && name.isNotEmpty() && !mainViewModel.productManager.hasProductWithName(
+                name.replaceFirstChar {
+                    it.uppercase()
+                })
+        ) {
+            product.name = name.replaceFirstChar {
+                it.uppercase()
+            }
+            product.changeIngredientsList(ingredients)
+            chechFilters(mainViewModel)
+
+            return true
+        }else if(ingredients.toSet() != olderProduct!!.getIngredients().toSet()){
             product.changeIngredientsList(ingredients)
             chechFilters(mainViewModel)
 
@@ -51,12 +72,12 @@ class ModifyViewModel : ViewModel() {
 
         return false
     }
-    
-    private fun chechFilters(mainViewModel: MainViewModel){
+
+    private fun chechFilters(mainViewModel: MainViewModel) {
         ingredientAdded.forEach { ingredient ->
             mainViewModel.addFilter(ingredient)
         }
-        
+
         ingredientsRemoved.forEach { ingredient ->
             mainViewModel.checkIngredientFilter(ingredient)
         }

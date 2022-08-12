@@ -26,6 +26,7 @@ import androidx.navigation.NavHostController
 import fr.ugovignon.foodlist.data.Product
 import fr.ugovignon.foodlist.compose.screen.Screen
 import fr.ugovignon.foodlist.compose.view_models.MainViewModel
+import fr.ugovignon.foodlist.helpers.resizeBitmap
 import fr.ugovignon.foodlist.managers.ProductManager
 import kotlinx.coroutines.launch
 
@@ -37,13 +38,14 @@ fun CardComposable(
     mainViewModel: MainViewModel,
     context: Context
 ) {
+    val displayedImageSize = 150
+
     val coroutineScope = rememberCoroutineScope()
     val paddingDeHors = 16.dp
     val paddingDeDans = 8.dp
     Card(
         elevation = 4.dp,
         modifier = Modifier
-            .background(Color(0xFFD2A8D3))
             .padding(paddingDeHors)
             .clickable {
                 navController.currentBackStackEntry?.savedStateHandle?.set(
@@ -70,11 +72,11 @@ fun CardComposable(
                 ) = createRefs()
                 Spacer(modifier = Modifier.size(16.dp))
                 Image(
-                    bitmap = product.bitmap!!.asImageBitmap(),
+                    bitmap = resizeBitmap(product.bitmap!!, displayedImageSize).asImageBitmap(),
                     product.name,
                     modifier = Modifier
                         .padding(start = paddingDeDans, bottom = paddingDeDans, end = paddingDeDans)
-                        .height(150.dp)
+                        .size(displayedImageSize.dp)
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(4.dp))
                         .constrainAs(image) {

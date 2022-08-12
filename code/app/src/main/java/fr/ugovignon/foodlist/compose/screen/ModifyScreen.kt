@@ -1,5 +1,6 @@
 package fr.ugovignon.foodlist.compose.screen
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -7,15 +8,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.toMutableStateList
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -24,10 +23,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import fr.ugovignon.foodlist.R
+import fr.ugovignon.foodlist.compose.CustomDialogPictureComposable
 import fr.ugovignon.foodlist.compose.LazyColumnModifyIngredients
 import fr.ugovignon.foodlist.compose.view_models.MainViewModel
 import fr.ugovignon.foodlist.compose.view_models.ModifyViewModel
 import fr.ugovignon.foodlist.data.Product
+import fr.ugovignon.foodlist.helpers.resizeBitmap
+import kotlinx.coroutines.launch
 
 @Composable
 fun ModifyScreen(
@@ -36,8 +38,10 @@ fun ModifyScreen(
     modifyViewModel: ModifyViewModel,
     mainViewModel: MainViewModel
 ) {
-
+    val displayedImageSize = 300
     val openDialogAdd = remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -58,8 +62,15 @@ fun ModifyScreen(
                     colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary),
                     shape = RoundedCornerShape(10.dp),
                     onClick = {
-                        if(modifyViewModel.validationModification(product, mainViewModel)) {
+                        if (modifyViewModel.validationModification(product, mainViewModel)) {
                             navController.popBackStack()
+                            scope.launch {
+                                mainViewModel.dataStoreProductManager.saveProductModified(
+                                    product,
+                                    modifyViewModel.olderProduct!!,
+                                    context
+                                )
+                            }
                         }
                     }
                 ) {
@@ -90,18 +101,13 @@ fun ModifyScreen(
                 )
             }
             Spacer(modifier = Modifier.height(40.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Image(
-                    bitmap = product.bitmap!!.asImageBitmap(),
-                    contentDescription = product.name,
-                    modifier = Modifier
-                        .size(300.dp)
-                        .clip(RoundedCornerShape(6.dp))
-                )
-            }
+            Image(
+                bitmap = resizeBitmap(product.bitmap!!, displayedImageSize).asImageBitmap(),
+                contentDescription = product.name,
+                modifier = Modifier
+                    .size(displayedImageSize.dp)
+                    .clip(RoundedCornerShape(6.dp))
+            )
             Spacer(modifier = Modifier.height(25.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -130,7 +136,13 @@ fun ModifyScreen(
                 }
             }
             Spacer(modifier = Modifier.height(25.dp))
-            LazyColumnModifyIngredients(product.getIngredients(), modifyViewModel, mainViewModel, openDialogAdd, modifyViewModel.ingredients.toMutableStateList())
+            LazyColumnModifyIngredients(
+                product.getIngredients(),
+                modifyViewModel,
+                mainViewModel,
+                openDialogAdd,
+                modifyViewModel.ingredients.toMutableStateList()
+            )
         }
     }
 }

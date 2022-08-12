@@ -64,7 +64,18 @@ fun getBitmapFromUri(cr: ContentResolver, url: Uri): Bitmap? {
     return bitmap
 }
 
-fun resizeBitmap(bitmap: Bitmap, newWidth: Int, newHeight: Int) : Bitmap{
+fun resizeBitmap(bitmap: Bitmap, desiredSize: Int) : Bitmap{
+
+    var newWidth = desiredSize
+    var newHeight = desiredSize
+
+    if(bitmap.width > bitmap.height){
+        newHeight = bitmap.height * newWidth / bitmap.width
+    }
+    else if(bitmap.height > bitmap.width){
+        newWidth = bitmap.width * newHeight / bitmap.height
+    }
+
     val scaledBitmap = createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888)
 
     val ratioX: Float = newWidth / bitmap.width.toFloat()

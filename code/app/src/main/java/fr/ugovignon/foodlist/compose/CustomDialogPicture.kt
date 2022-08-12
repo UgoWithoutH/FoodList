@@ -34,9 +34,8 @@ import fr.ugovignon.foodlist.helpers.getBitmapFromUri
 
 @Composable
 fun CustomDialogPictureComposable(
-    hasImage: MutableState<Boolean>,
+    hasImage: MutableState<Boolean>?,
     bitmap: MutableState<Bitmap?>,
-    imageBitmap: MutableState<ImageBitmap?>,
     setShowDialog: (Boolean) -> Unit
 ) {
 
@@ -49,9 +48,10 @@ fun CustomDialogPictureComposable(
     val imagePicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri ->
-            hasImage.value = uri != null
+            if(hasImage != null) {
+                hasImage.value = uri != null
+            }
             bitmap.value  = getBitmapFromUri(context.contentResolver, uri!!)
-            imageBitmap.value = bitmap.value!!.asImageBitmap()
             setShowDialog(false)
         }
     )
@@ -59,9 +59,10 @@ fun CustomDialogPictureComposable(
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture(),
         onResult = { success ->
-            hasImage.value = success
+            if(hasImage != null) {
+                hasImage.value = success
+            }
             bitmap.value  = getBitmapFromUri(context.contentResolver, imageUri.value!!)
-            imageBitmap.value = bitmap.value!!.asImageBitmap()
             setShowDialog(false)
         }
     )

@@ -28,6 +28,7 @@ import fr.ugovignon.foodlist.R
 import fr.ugovignon.foodlist.compose.LazyColumnIngredients
 import fr.ugovignon.foodlist.compose.view_models.ModifyViewModel
 import fr.ugovignon.foodlist.data.Product
+import fr.ugovignon.foodlist.helpers.resizeBitmap
 
 @Composable
 fun DetailScreen(
@@ -35,6 +36,8 @@ fun DetailScreen(
     product: Product,
     modifyViewModel: ModifyViewModel
 ) {
+
+    val displayedImageSize = 300
 
     ConstraintLayout(
         modifier = Modifier
@@ -87,10 +90,10 @@ fun DetailScreen(
                 horizontalArrangement = Arrangement.Center
             ) {
                 Image(
-                    bitmap = product.bitmap!!.asImageBitmap(),
+                    bitmap = resizeBitmap(product.bitmap!!, displayedImageSize).asImageBitmap(),
                     contentDescription = product.name,
                     modifier = Modifier
-                        .size(300.dp)
+                        .size(displayedImageSize.dp)
                         .clip(RoundedCornerShape(6.dp))
                 )
             }

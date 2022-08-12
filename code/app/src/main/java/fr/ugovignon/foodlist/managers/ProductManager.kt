@@ -40,6 +40,16 @@ class ProductManager() {
         productList.clear()
     }
 
+    fun hasProductWithName(name : String) : Boolean{
+        productList.forEach {
+            if (it.name == name){
+                return true
+            }
+        }
+
+        return false
+    }
+
     fun getList(): SnapshotStateList<Product> {
         return productList.toMutableStateList()
     }

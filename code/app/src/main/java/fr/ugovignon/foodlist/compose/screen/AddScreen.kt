@@ -42,24 +42,21 @@ fun AddScreen(
     addViewModel: AddViewModel
 ) {
 
+    val displayedImageSize = 300
     val feeditems = addViewModel.ingredients.toMutableStateList()
     val hasImage = remember {
         mutableStateOf(false)
     }
 
-    var bitmap = remember {
+    val bitmap = remember {
         mutableStateOf<Bitmap?>(null)
-    }
-
-    val imageBitmap = remember {
-        mutableStateOf<ImageBitmap?>(null)
     }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val showDialog = remember { mutableStateOf(false) }
 
     if (showDialog.value) {
-        CustomDialogPictureComposable(hasImage, bitmap, imageBitmap) {
+        CustomDialogPictureComposable(hasImage, bitmap) {
             showDialog.value = it
         }
     }
@@ -111,7 +108,7 @@ fun AddScreen(
                                 it.uppercase()
                             },
                             addViewModel.ingredients,
-                            resizeBitmap(bitmap.value!!, 300, 300)
+                            resizeBitmap(bitmap.value!!, 300)
                         )
                         if (mainViewModel.productManager.add(product)) {
                             mainViewModel.addFilters(product.getIngredients())
@@ -144,28 +141,44 @@ fun AddScreen(
             )
             Spacer(modifier = Modifier.height(50.dp))
 
-
-            Button(
-                modifier = Modifier
-                    .size(150.dp),
-                onClick = {
-                    showDialog.value = true
-                },
-                shape = RoundedCornerShape(10.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF824083)),
-                elevation = ButtonDefaults.elevation(
-                    defaultElevation = 10.dp,
-                    pressedElevation = 0.dp,
-                    disabledElevation = 10.dp
-                )
-            ) {
-                if (hasImage.value) {
+            if (hasImage.value) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     Image(
-                        bitmap = imageBitmap.value!!,
+                        bitmap = resizeBitmap(bitmap.value!!, displayedImageSize).asImageBitmap(),
                         contentDescription = null,
-                        modifier = Modifier.size(200.dp)
+                        modifier = Modifier.size(displayedImageSize.dp)
                     )
-                } else {
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Button(
+                        shape = RoundedCornerShape(10.dp),
+                        onClick = { showDialog.value = true },
+                        colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(R.color.custom_mauve)),
+                        elevation = ButtonDefaults.elevation(
+                            defaultElevation = 10.dp,
+                            pressedElevation = 0.dp,
+                            disabledElevation = 10.dp
+                        )
+                    ) {
+                     Text(text = "Sélectionner une autre image")
+                    }
+                }
+            } else {
+                Button(
+                    modifier = Modifier
+                        .size(150.dp),
+                    onClick = {
+                        showDialog.value = true
+                    },
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(R.color.custom_mauve)),
+                    elevation = ButtonDefaults.elevation(
+                        defaultElevation = 10.dp,
+                        pressedElevation = 0.dp,
+                        disabledElevation = 10.dp
+                    )
+                ) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
