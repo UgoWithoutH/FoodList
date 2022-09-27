@@ -113,7 +113,7 @@ fun AddScreen(
                         if (mainViewModel.productManager.add(product)) {
                             mainViewModel.addFilters(product.getIngredients())
                             scope.launch {
-                                mainViewModel.dataStoreProductManager.saveProduct(product, context)
+                                mainViewModel.dataStoreProductManager.saveProduct(product, context, mainViewModel)
                             }
                             navController.popBackStack()
                         }

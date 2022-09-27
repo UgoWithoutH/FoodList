@@ -33,6 +33,7 @@ class DataStoreProductManager : Parcelable {
         val result = preferences[PreferencesKeys.PRODUCTS]
         if (result != null) {
             try {
+                mainViewModel.loadingProducts()
                 val jsonArray = JSONArray(result)
                 for (i in 0 until jsonArray.length()) {
                     val jsonObject = jsonArray.getJSONObject(i)
@@ -46,11 +47,11 @@ class DataStoreProductManager : Parcelable {
                         val jsonObjectIngredient = jsonArrayIngredients.getJSONObject(j)
                         ingredients.add(Ingredient(jsonObjectIngredient.getString("name")))
                     }
-
                     val product = Product(code, name, ingredients, image)
                     productList.add(product)
                     mainViewModel.addFilters(product.getIngredients())
                 }
+                mainViewModel.loading.value = false
             } catch (e: JSONException) {
                 e.printStackTrace();
             }
@@ -59,12 +60,13 @@ class DataStoreProductManager : Parcelable {
         return productList
     }
 
-    suspend fun deleteProduct(context: Context, productToDelete: Product) {
+    suspend fun deleteProduct(context: Context, productToDelete: Product, mainViewModel: MainViewModel) {
         context.dataStore.edit { settings ->
             val result = settings[PreferencesKeys.PRODUCTS]
 
             if (result != null) {
                 try {
+                    mainViewModel.loadingSaveProduct()
                     val jsonArrayResult = JSONArray(result)
                     val newJsonArray = JSONArray()
                     for (i in 0 until jsonArrayResult.length()) {
@@ -84,8 +86,12 @@ class DataStoreProductManager : Parcelable {
                         if (product != productToDelete) {
                             newJsonArray.put(jsonObject)
                         }
+                        product.getIngredients().forEach {
+                            mainViewModel.checkIngredientFilter(it)
+                        }
                     }
                     settings[PreferencesKeys.PRODUCTS] = newJsonArray.toString()
+                    mainViewModel.loading.value = false
                 } catch (e: JSONException) {
                     e.printStackTrace()
                 }
@@ -93,12 +99,13 @@ class DataStoreProductManager : Parcelable {
         }
     }
 
-    suspend fun saveProductModified(newProduct: Product, olderProduct: Product, context: Context) {
+    suspend fun saveProductModified(newProduct: Product, olderProduct: Product, context: Context, mainViewModel: MainViewModel) {
         context.dataStore.edit { settings ->
             val result = settings[PreferencesKeys.PRODUCTS]
 
             if (result != null) {
                 try {
+                    mainViewModel.loadingSaveProduct()
                     val jsonArrayResult = JSONArray(result)
                     val newJsonArray = JSONArray()
                     for (i in 0 until jsonArrayResult.length()) {
@@ -134,6 +141,7 @@ class DataStoreProductManager : Parcelable {
                         newJsonArray.put(jsonObject)
                     }
                     settings[PreferencesKeys.PRODUCTS] = newJsonArray.toString()
+                    mainViewModel.loading.value = false
                 } catch (e: JSONException) {
                     e.printStackTrace()
                 }
@@ -141,10 +149,11 @@ class DataStoreProductManager : Parcelable {
         }
     }
 
-    suspend fun saveProduct(product: Product, context: Context) {
+    suspend fun saveProduct(product: Product, context: Context, mainViewModel: MainViewModel) {
         val jsonObject = JSONObject()
 
         try {
+            mainViewModel.loadingSaveProduct()
             val jsonArrayIngredients = JSONArray()
             jsonObject.put("code", product.code)
             jsonObject.put("name", product.name)
@@ -158,13 +167,13 @@ class DataStoreProductManager : Parcelable {
             }
             jsonObject.put("ingredients", jsonArrayIngredients)
 
-            saveProduct(jsonObject, context)
+            saveProduct(jsonObject, context, mainViewModel)
         } catch (e: JSONException) {
             e.printStackTrace()
         }
     }
 
-    private suspend fun saveProduct(jsonObject: JSONObject, context: Context) {
+    private suspend fun saveProduct(jsonObject: JSONObject, context: Context, mainViewModel: MainViewModel) {
         context.dataStore.edit { settings ->
             val result = settings[PreferencesKeys.PRODUCTS]
 
@@ -181,6 +190,7 @@ class DataStoreProductManager : Parcelable {
                 jsonArrayResult.put(jsonObject)
                 settings[PreferencesKeys.PRODUCTS] = jsonArrayResult.toString()
             }
+            mainViewModel.loading.value = false
         }
     }
 

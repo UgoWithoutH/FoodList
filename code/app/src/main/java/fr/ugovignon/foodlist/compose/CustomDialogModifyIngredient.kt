@@ -35,8 +35,7 @@ import fr.ugovignon.foodlist.data.Ingredient
 fun CustomDialogModifyIngredient(
     setShowDialog: (Boolean) -> Unit,
     snapshotStateList: SnapshotStateList<Ingredient>,
-    modifyViewModel: ModifyViewModel,
-    mainViewModel: MainViewModel
+    modifyViewModel: ModifyViewModel
 ) {
 
     val txtFieldError = remember { mutableStateOf("") }

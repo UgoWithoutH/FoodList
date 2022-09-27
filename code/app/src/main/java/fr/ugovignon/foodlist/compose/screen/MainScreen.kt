@@ -26,6 +26,8 @@ import com.journeyapps.barcodescanner.ScanOptions
 import fr.ugovignon.foodlist.CardComposable
 import fr.ugovignon.foodlist.R
 import fr.ugovignon.foodlist.compose.CircularIndeterminateProgressBar
+import fr.ugovignon.foodlist.compose.CustomDialogDeleteProduct
+import fr.ugovignon.foodlist.compose.CustomDialogModifyIngredient
 import fr.ugovignon.foodlist.compose.view_models.MainViewModel
 import fr.ugovignon.foodlist.managers.ProductManager
 
@@ -34,9 +36,19 @@ fun MainScreen(
     navController: NavHostController,
     productManager: ProductManager,
     barcodeLauncher: ActivityResultLauncher<ScanOptions>,
-    mainViewModel: MainViewModel,
-    context: Context
+    mainViewModel: MainViewModel
 ) {
+
+    val showDialog = remember { mutableStateOf(false) }
+
+    if (showDialog.value) {
+        CustomDialogDeleteProduct(
+            {
+                showDialog.value = it
+            },
+            mainViewModel
+        )
+    }
 
     ConstraintLayout(
         modifier = Modifier
@@ -161,7 +173,7 @@ fun MainScreen(
             }
         }
 
-        CircularIndeterminateProgressBar(mainViewModel.loading.value)
+        CircularIndeterminateProgressBar(mainViewModel.loading.value, mainViewModel.loadingMessage.value)
         
         LazyColumn(
             modifier = Modifier
@@ -174,7 +186,13 @@ fun MainScreen(
                 if(mainViewModel.loading.value){
                     mainViewModel.loading.value = false
                 }
-                CardComposable(navController, item, productManager, mainViewModel, context)
+                CardComposable(
+                    navController,
+                    item,
+                    mainViewModel
+                ) {
+                    showDialog.value = it
+                }
             }
         }
 

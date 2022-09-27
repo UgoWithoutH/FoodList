@@ -199,7 +199,6 @@ fun readFile(
     coroutineScope: CoroutineScope
 ) {
     mainViewModel.productManager.clear()
-    mainViewModel.loading.value = true
     val dataText = File(filePath).readText(Charsets.UTF_8)
     try {
         val jsonArray = JSONArray(dataText)
@@ -220,7 +219,7 @@ fun readFile(
             mainViewModel.productManager.add(product)
             mainViewModel.addFilters(product.getIngredients())
             coroutineScope.launch {
-                mainViewModel.dataStoreProductManager.saveProduct(product, context)
+                mainViewModel.dataStoreProductManager.saveProduct(product, context, mainViewModel)
             }
         }
     } catch (e: JSONException) {

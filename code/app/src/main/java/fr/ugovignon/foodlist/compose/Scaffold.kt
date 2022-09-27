@@ -93,8 +93,7 @@ fun ScaffoldComposable(
                 searchTextState = searchTextState,
                 mainViewModel = mainViewModel,
                 modifyViewModel = modifyViewModel,
-                addViewModel = addViewModel,
-                context = context
+                addViewModel = addViewModel
             )
         }
     )

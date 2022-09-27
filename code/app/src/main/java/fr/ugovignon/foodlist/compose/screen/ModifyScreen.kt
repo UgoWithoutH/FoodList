@@ -68,7 +68,8 @@ fun ModifyScreen(
                                 mainViewModel.dataStoreProductManager.saveProductModified(
                                     product,
                                     modifyViewModel.olderProduct!!,
-                                    context
+                                    context,
+                                    mainViewModel
                                 )
                             }
                         }

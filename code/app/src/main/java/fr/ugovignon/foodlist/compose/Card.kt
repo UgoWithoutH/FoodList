@@ -34,13 +34,11 @@ import kotlinx.coroutines.launch
 fun CardComposable(
     navController: NavHostController,
     product: Product,
-    productManager: ProductManager,
     mainViewModel: MainViewModel,
-    context: Context
+    setShowDialog: (Boolean) -> Unit
 ) {
     val displayedImageSize = 150
 
-    val coroutineScope = rememberCoroutineScope()
     val paddingDeHors = 16.dp
     val paddingDeDans = 8.dp
     Card(
@@ -93,13 +91,8 @@ fun CardComposable(
                             start.linkTo(parent.start)
                         },
                     onClick = {
-                        productManager.remove(product)
-                        product.getIngredients().forEach {
-                            mainViewModel.checkIngredientFilter(it)
-                        }
-                        coroutineScope.launch {
-                            mainViewModel.dataStoreProductManager.deleteProduct(context, product)
-                        }
+                        mainViewModel.productToDelete = product
+                        setShowDialog(true)
                     },
                 ) {
                     Icon(

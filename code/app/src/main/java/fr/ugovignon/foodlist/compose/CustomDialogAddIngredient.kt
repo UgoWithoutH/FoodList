@@ -132,7 +132,6 @@ fun CustomDialogAddIngredient(
                                 }
                                 val ingredient = Ingredient(modifyViewModel.addIngredientName)
                                 modifyViewModel.addIngredient(ingredient)
-                                //mainViewModel.addFilter(ingredient)
                                 snapshotStateList.clear()
                                 snapshotStateList.addAll(modifyViewModel.ingredients)
                                 modifyViewModel.addIngredientName = ""

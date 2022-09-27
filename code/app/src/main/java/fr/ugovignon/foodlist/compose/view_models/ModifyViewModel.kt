@@ -33,7 +33,7 @@ class ModifyViewModel : ViewModel() {
     fun addIngredient(ingredient: Ingredient) {
         if (!ingredients.contains(ingredient)) {
             ingredientAdded.add(ingredient)
-            ingredients.add(ingredient)
+            ingredients.add(0,ingredient)
         }
     }
 
@@ -51,11 +51,7 @@ class ModifyViewModel : ViewModel() {
             product.bitmap
         )
 
-        if (name.isNotBlank() && name.isNotEmpty() && !mainViewModel.productManager.hasProductWithName(
-                name.replaceFirstChar {
-                    it.uppercase()
-                })
-        ) {
+        if (name.isNotBlank() && name.isNotEmpty()) {
             product.name = name.replaceFirstChar {
                 it.uppercase()
             }

@@ -43,8 +43,7 @@ fun LazyColumnModifyIngredients(
                 openDialogModify.value = it
             },
             feeditems,
-            modifyViewModel,
-            mainViewModel
+            modifyViewModel
         )
     }
     LazyColumn(

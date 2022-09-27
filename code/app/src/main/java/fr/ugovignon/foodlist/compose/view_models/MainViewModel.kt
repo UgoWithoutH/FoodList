@@ -8,6 +8,7 @@ import fr.ugovignon.foodlist.classify.Classifier
 import fr.ugovignon.foodlist.classify.NoneClassifier
 import fr.ugovignon.foodlist.compose.search.SearchWidgetState
 import fr.ugovignon.foodlist.data.Ingredient
+import fr.ugovignon.foodlist.data.Product
 import fr.ugovignon.foodlist.managers.DataStoreProductManager
 import fr.ugovignon.foodlist.managers.ProductManager
 
@@ -58,6 +59,9 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    //delete product
+    var productToDelete: Product? = null
+
 
     //Product list
     val productManager = ProductManager()
@@ -74,7 +78,19 @@ class MainViewModel : ViewModel() {
 
     //loading
     var loading = mutableStateOf(false)
+    val loadingMessageSaveProduct = "Veuillez patientez, Sauvegarde des produits"
+    val loadingMessageProducts = "Veuillez patientez, Chargement des produits"
+    var loadingMessage = mutableStateOf(loadingMessageSaveProduct)
 
+    fun loadingSaveProduct(){
+        loading.value = true
+        loadingMessage.value = loadingMessageSaveProduct
+    }
+
+    fun loadingProducts(){
+        loading.value = true
+        loadingMessage.value = loadingMessageProducts
+    }
     //datastore
     lateinit var dataStoreProductManager: DataStoreProductManager
 }

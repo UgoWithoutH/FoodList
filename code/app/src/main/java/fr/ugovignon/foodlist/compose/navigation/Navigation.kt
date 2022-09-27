@@ -24,8 +24,7 @@ fun SetUpNavGraph(
     searchTextState: String,
     mainViewModel: MainViewModel,
     modifyViewModel: ModifyViewModel,
-    addViewModel: AddViewModel,
-    context: Context
+    addViewModel: AddViewModel
 ) {
 
     NavHost(
@@ -34,7 +33,7 @@ fun SetUpNavGraph(
     )
     {
         composable(route = Screen.MainScreen.route) {
-            MainScreen(navController, productManager, barcodeLauncher, mainViewModel, context)
+            MainScreen(navController, productManager, barcodeLauncher, mainViewModel)
         }
 
         composable(route = Screen.DetailScreen.route) {

@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
                         mainViewModel.productManager.add(product)
                         mainViewModel.addFilters(product.getIngredients())
                         lifecycleScope.launch {
-                            mainViewModel.dataStoreProductManager.saveProduct(product, getContext())
+                            mainViewModel.dataStoreProductManager.saveProduct(product, getContext(), mainViewModel)
                         }
                     }
                 }
