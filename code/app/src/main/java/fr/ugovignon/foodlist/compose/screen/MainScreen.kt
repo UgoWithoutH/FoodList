@@ -177,6 +177,7 @@ fun MainScreen(
         
         LazyColumn(
             modifier = Modifier
+                .padding(start = 0.dp, top = 0.dp, end = 0.dp, bottom = 80.dp)
                 .background(Color.Transparent)
                 .constrainAs(productColumn) {
                     top.linkTo(select.bottom)
